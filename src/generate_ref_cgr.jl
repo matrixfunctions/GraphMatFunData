@@ -1,15 +1,23 @@
 # export JULIA_LOAD_PATH=$JULIA_LOAD_PATH:~/jobb/src/matfun
 using GraphMatFun
 mv=1:11
-data_dir=joinpath("..","data","exp");
+data_dir=joinpath("..","data");
 references=Dict{Symbol,String}();
 references[:sid]="Boosting the computation of the matrix exponential, J. Sastre, J. Ibáñez, E. Defez, Appl. Math.  Computation, 340, 2019, 206-220";
 references[:sastre]="Efficient evaluation of matrix polynomials, J. Sastre. Linear Algebra and its Applications ,Volume 539, 2018, Pages 229-250, https://doi.org/10.1016/j.laa.2017.11.010";
 references[:bbc]="Computing the matrix exponential with an optimized Taylor polynomial approximation, P. Bader, S.  Blanes, and F. Casas, Mathematics, 7(12), 2019";
-references[:ps]="On the number of nonscalar multiplications necessary to evaluate polynomials, M. Paterson, L.   Stockmeyer, SIAM J. Comput., 2(1), 1973";
-references[:mono]="monomial Taylor series evaluation";
+references[:exp_ps]="evaluation of Taylor series using On the number of nonscalar multiplications necessary to evaluate polynomials, M. Paterson, L.   Stockmeyer, SIAM J. Comput., 2(1), 1973";
+references[:exp_mono]="monomial Taylor series evaluation of exponential";
 references[:exp_native_jl]="converted Julia 1.7 implementation of Scaling and squaring https://github.com/JuliaLang/julia/blob/697e782ab86bfcdd7fd15550241fe162c51d9f98/stdlib/LinearAlgebra/src/dense.jl#L554 which is based on N. J. Higham. The Scaling and Squaring Method for the Matrix Exponential Revisited. SIAM J. Matrix Anal. Appl., 2005 26:4, 1179-1193"
 methods=keys(references);
+
+funs=Dict{Symbol,String}();
+funs[:sid]="exp";
+funs[:sastre]="exp";
+funs[:bbc]="exp";
+funs[:exp_ps]="exp";
+funs[:exp_mono]="exp";
+funs[:exp_native_jl]="exp";
 
 
 for m in mv
@@ -17,6 +25,7 @@ for m in mv
         reftext=references[method]
         multstr="with m=$m multiplications";
         fname="$(method)_m$m.cgr";
+        fun=funs[method];
         try
             extra_text="";
             dom=""; # Domain
@@ -31,7 +40,7 @@ for m in mv
                 end
                 (graph,_)=graph_bbc_basic_exp(m);
 
-            elseif (method == :ps)
+            elseif (method == :exp_ps)
                 # Automatically determine degree
                 deg=0;
                 old_graph=NaN; graph=NaN;
@@ -46,7 +55,7 @@ for m in mv
                 end
                 graph=old_graph;
                 extra_text=" degree=$deg";
-            elseif (method == :mono)
+            elseif (method == :exp_mono)
                 # Automatically determine degree
                 deg=0;
                 old_graph=NaN; graph=NaN;
@@ -79,9 +88,10 @@ for m in mv
                 rhostr=replace(string(rho),"." => "_");
                 fname="exp_native_jl_rho$(rhostr).cgr";
             end
-            compress_graph!(graph);
+            # Note: The graph compression is done in the code generation
+            # phase.
             descr="Reference implementation of $reftext $multstr$extra_text"
-            export_compgraph(graph,joinpath(data_dir,fname),
+            export_compgraph(graph,joinpath(data_dir,fun,fname),
                              descr=descr,user="Elias Jarlebring",
                              dom=dom,
                              genby="GraphMatFunData/src/ref/generate_ref.jl");
