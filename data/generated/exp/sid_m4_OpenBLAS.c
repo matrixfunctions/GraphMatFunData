@@ -4,7 +4,7 @@
 #include<stdlib.h>
 #include<string.h>
 
-/* Code for polynomial evaluation. */
+/* Code for matrix function evaluation. */
 void dsid_m4(double *A, const size_t n, double *output) {
     size_t max_memalloc = 6;
     size_t max_memslots = 7;

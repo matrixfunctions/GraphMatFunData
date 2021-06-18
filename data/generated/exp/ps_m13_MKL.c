@@ -3,7 +3,7 @@
 #include<stdlib.h>
 #include<string.h>
 
-/* Code for polynomial evaluation. */
+/* Code for matrix function evaluation. */
 void dps_m13(double *A, const size_t n, double *output) {
     size_t max_memalloc = 9;
     size_t max_memslots = 10;
