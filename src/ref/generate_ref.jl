@@ -95,3 +95,24 @@ for m in mv
     end
 
 end
+
+gen_code_dir=joinpath("..","..","data","generated","exp");
+# Generated code
+for fname in readdir(data_dir);
+
+    if (endswith(fname,".cgr"))
+        # Only process cgr-files
+        basename=split(fname,".")[1];
+        @show basename
+        graph=import_compgraph(joinpath(data_dir,fname));
+        compress_graph!(graph);
+
+        gen_code(joinpath(gen_code_dir,"$(basename).jl"),
+                 graph,
+                 funname=basename);
+
+
+    end
+
+
+end
