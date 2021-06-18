@@ -7,6 +7,7 @@ references[:sid]="Boosting the computation of the matrix exponential, J. Sastre,
 references[:sastre]="Efficient evaluation of matrix polynomials, J. Sastre. Linear Algebra and its Applications ,Volume 539, 2018, Pages 229-250, https://doi.org/10.1016/j.laa.2017.11.010";
 references[:bbc]="Computing the matrix exponential with an optimized Taylor polynomial approximation, P. Bader, S.  Blanes, and F. Casas, Mathematics, 7(12), 2019";
 references[:ps]="On the number of nonscalar multiplications necessary to evaluate polynomials, M. Paterson, L.   Stockmeyer, SIAM J. Comput., 2(1), 1973";
+references[:mono]="monomial Taylor series evaluation";
 
 methods=keys(references);
 
@@ -35,6 +36,21 @@ for m in mv
                     taylor=1 ./ factorial.(convert.(BigFloat,0:deg0));
                     old_graph=graph;
                     (graph,_)=graph_ps(taylor);
+                    if (count(values(graph.operations) .== :mult) > m)
+                        deg=deg0-1;
+                        break;
+                    end
+                end
+                graph=old_graph;
+                extra_text=" degree=$deg";
+            elseif (method == :mono)
+                # Automatically determine degree
+                deg=0;
+                old_graph=NaN; graph=NaN;
+                for deg0=1:100
+                    taylor=1 ./ factorial.(convert.(BigFloat,0:deg0));
+                    old_graph=graph;
+                    (graph,_)=graph_monomial_degopt(taylor);
                     if (count(values(graph.operations) .== :mult) > m)
                         deg=deg0-1;
                         break;
