@@ -1,6 +1,6 @@
 # export JULIA_LOAD_PATH=$JULIA_LOAD_PATH:~/jobb/src/matfun
 using GraphMatFun
-mv=1:10
+mv=1:11
 data_dir=joinpath("..","..","data","exp");
 references=Dict{Symbol,String}();
 references[:sid]="Boosting the computation of the matrix exponential, J. Sastre, J. Ibáñez, E. Defez, Appl. Math.  Computation, 340, 2019, 206-220";
@@ -8,15 +8,18 @@ references[:sastre]="Efficient evaluation of matrix polynomials, J. Sastre. Line
 references[:bbc]="Computing the matrix exponential with an optimized Taylor polynomial approximation, P. Bader, S.  Blanes, and F. Casas, Mathematics, 7(12), 2019";
 references[:ps]="On the number of nonscalar multiplications necessary to evaluate polynomials, M. Paterson, L.   Stockmeyer, SIAM J. Comput., 2(1), 1973";
 references[:mono]="monomial Taylor series evaluation";
-
+references[:exp_native_jl]="converted Julia 1.7 implementation of Scaling and squaring https://github.com/JuliaLang/julia/blob/697e782ab86bfcdd7fd15550241fe162c51d9f98/stdlib/LinearAlgebra/src/dense.jl#L554 which is based on N. J. Higham. The Scaling and Squaring Method for the Matrix Exponential Revisited. SIAM J. Matrix Anal. Appl., 2005 26:4, 1179-1193"
 methods=keys(references);
 
 
 for m in mv
     for method in methods
         reftext=references[method]
+        multstr="with m=$m multiplications";
+        fname="$(method)_m$m.cgr";
         try
             extra_text="";
+            dom=""; # Domain
             if (method == :sid)
                 (graph,_)=graph_sid_exp(m);
             elseif (method == :sastre)
@@ -58,13 +61,35 @@ for m in mv
                 end
                 graph=old_graph;
                 extra_text=" degree=$deg";
+            elseif method == :exp_native_jl
+                normlist=[0.015;0.25;0.95;2.1;5.4];
+
+                for j=1:m-size(normlist,1)
+                    push!(normlist,normlist[end]*2); # square
+                end
+
+
+
+                n=normlist[m] # Interpret m as the m'th rho interval
+                (graph,_)=graph_exp_native_jl(reshape([n-0.0001],1,1));
+                rho=n;
+                dom="$(rho)D";
+                mults=count(values(graph.operations) .== :mult)
+                multstr="with $mults multiplications and one inverse multiplication";
+                rhostr=replace(string(rho),"." => "_");
+                fname="exp_native_jl_rho$(rhostr).cgr";
             end
             compress_graph!(graph);
-            descr="Reference implementation of $reftext with m=$m multiplications$extra_text"
-            export_compgraph(graph,joinpath(data_dir,"$(method)_m$m.cgr"),
+            descr="Reference implementation of $reftext $multstr$extra_text"
+            export_compgraph(graph,joinpath(data_dir,fname),
                              descr=descr,user="Elias Jarlebring",
+                             dom=dom,
                              genby="GraphMatFunData/src/ref/generate_ref.jl");
         catch (e)
+            if (typeof(e) != ErrorException)
+                rethrow(e);
+            end
+
             println("$method: Skipping m=$m multiplications");
         end
     end
