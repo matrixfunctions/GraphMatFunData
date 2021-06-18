@@ -1,7 +1,7 @@
 # export JULIA_LOAD_PATH=$JULIA_LOAD_PATH:~/jobb/src/matfun
 using GraphMatFun
 mv=1:11
-data_dir=joinpath("..","..","data","exp");
+data_dir=joinpath("..","data","exp");
 references=Dict{Symbol,String}();
 references[:sid]="Boosting the computation of the matrix exponential, J. Sastre, J. Ibáñez, E. Defez, Appl. Math.  Computation, 340, 2019, 206-220";
 references[:sastre]="Efficient evaluation of matrix polynomials, J. Sastre. Linear Algebra and its Applications ,Volume 539, 2018, Pages 229-250, https://doi.org/10.1016/j.laa.2017.11.010";
@@ -93,39 +93,5 @@ for m in mv
             println("$method: Skipping m=$m multiplications");
         end
     end
-
-end
-
-gen_code_dir=joinpath("..","..","data","generated","exp");
-# Generated code
-langlist=[LangJulia(),LangMatlab(), LangC_MKL(), LangC_OpenBLAS()];
-extlist=[".jl",".m","_MKL.c","_OpenBLAS.c"];
-for fname in readdir(data_dir);
-
-    if (endswith(fname,".cgr"))
-        # Only process cgr-files
-        basename=split(fname,".")[1];
-        @show basename
-        graph=import_compgraph(joinpath(data_dir,fname));
-        compress_graph!(graph);
-
-        if (eltype(graph) == BigFloat)
-            graph=Compgraph(Float64,graph);
-        end
-        if (eltype(graph) == Complex{BigFloat})
-            graph=Compgraph(ComplexF64,graph);
-        end
-
-
-        for (i,lang) in enumerate(langlist)
-            ext=extlist[i];
-            gen_code(joinpath(gen_code_dir,"$(basename)$(ext)"),
-                     graph,
-                     funname=basename,lang=lang);
-
-        end
-
-    end
-
 
 end
