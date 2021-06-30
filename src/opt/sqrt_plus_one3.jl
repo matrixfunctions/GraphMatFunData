@@ -1,8 +1,8 @@
 using GraphMatFun, LinearAlgebra,GenericSVD
 
 function graph_generalized_denman_beavers()
-    graph=Compgraph(Float64);
 
+    # Construct a Degopt and change :mult to :ldiv
     HA=[1.0  1.0   0.0  0.0  0.0
         0.5  0.0   0.5  0.0  0.0
         1.0  0.5   0.0  0.0  0.0
@@ -14,7 +14,6 @@ function graph_generalized_denman_beavers()
         1.0 0.0 0.0 0.0 0.0];
     y=[1/4; 1/8;0;1/4;0;1/2];
 
-
     degopt=Degopt(HA,HB,y);
     (graph,cref)=graph_degopt(degopt);
     # Replace :mult with ldiv
@@ -24,40 +23,6 @@ function graph_generalized_denman_beavers()
         end
     end
 
-#
-#    cref=[];
-#    cref_tmp=add_sum!(graph,:B1a,[1; 1.0], [:I;:A]);;
-#    push!(cref,cref_tmp...);
-#    cref_tmp=add_sum!(graph,:B1b,[1; 0.0], [:I;:A]);;
-#    push!(cref,cref_tmp...);
-#    add_ldiv!(graph,:B1,:B1a,:B1b);
-#
-#
-#    cref_tmp=add_sum!(graph,:B2a,[0.5; 0; 0.5], [:I;:A;:B1]);;
-#    push!(cref,cref_tmp...);
-#    cref_tmp=add_sum!(graph,:B2b,[1; 0;0.0], [:I;:A;:B1]);;
-#    push!(cref,cref_tmp...);
-#    add_ldiv!(graph,:B2,:B2a,:B2b);
-#
-#
-#    cref_tmp=add_sum!(graph,:B3a,[1; 0.5;0;0], [:I;:A;:B1;:B2]);;
-#    push!(cref,cref_tmp...);
-#    cref_tmp=add_sum!(graph,:B3b,[1; 0;0;0.0], [:I;:A;:B1;:B2]);;
-#    push!(cref,cref_tmp...);
-#    add_ldiv!(graph,:B3,:B3a,:B3b);
-#
-#
-#    cref_tmp=add_sum!(graph,:B4a,[1/4; 0; 1/4; 0; 1/2], [:I;:A;:B1;:B2;:B3]);;
-#    push!(cref,cref_tmp...);
-#    cref_tmp=add_sum!(graph,:B4b,[1; 0;0;0;0.0], [:I;:A;:B1;:B2;:B3]);;
-#    push!(cref,cref_tmp...);
-#    add_ldiv!(graph,:B4,:B4a,:B4b);
-#
-#    cref_tmp=add_sum!(graph,:y,[1/4; 1/8;0;1/4;0;1/2],
-#                      [:I;:A;:B1;:B2;:B3;:B4])
-#    push!(cref,cref_tmp...);
-#    add_output!(graph,:y);
-#
     return (graph,cref)
 end
 function get_coeffs_denman_beavers(graph)
@@ -99,7 +64,7 @@ compress_graph!(graph,cref)
 T=BigFloat;
 graph=Compgraph(T,graph);
 state=State(f,complex(T));
-state.params[:rho]=0.4;
+state.params[:rho]=0.5;
 state.params[:target_n]=2000;
 state.params[:n]=1000;
 state.params[:graphname]="denman_beavers";
@@ -116,12 +81,28 @@ state.params[:graphname]="denman_beavers_opt";
 discr=get_disc_discr(state);
 
 opt_gauss_newton!(graph,f,discr,logger=1,cref=cref,
-                  linlsqr=:real_svd,droptol=1e-10,
-                  stoptol=1e-14,errtype=:relerr,maxit=10)
+                  linlsqr=:real_svd,droptol=1e-8,
+                  stoptol=1e-16,errtype=:relerr,maxit=5)
+showerr(state,showmeta=true)
+opt_gauss_newton!(graph,f,discr,logger=1,cref=cref,
+                  linlsqr=:real_svd,droptol=1e-9,
+                  stoptol=1e-16,errtype=:relerr,maxit=5)
+showerr(state,showmeta=true)
+opt_gauss_newton!(graph,f,discr,logger=1,cref=cref,
+                  linlsqr=:real_svd,droptol=1e-11,
+                  stoptol=1e-16,errtype=:relerr,maxit=5)
+showerr(state,showmeta=true)
+opt_gauss_newton!(graph,f,discr,logger=1,cref=cref,
+                  linlsqr=:real_svd,droptol=1e-12,
+                  stoptol=1e-16,errtype=:relerr,maxit=5)
+showerr(state,showmeta=true)
+opt_gauss_newton!(graph,f,discr,logger=1,cref=cref,
+                  linlsqr=:real_svd,droptol=1e-13,
+                  stoptol=1e-16,errtype=:relerr,maxit=5)
 showerr(state,showmeta=true)
 opt_gauss_newton!(graph,f,discr,logger=1,cref=cref,
                   linlsqr=:real_svd,droptol=1e-14,
-                  stoptol=1e-14,errtype=:relerr,maxit=10)
+                  stoptol=1e-16,errtype=:relerr,maxit=10)
 count(values(graph.operations) .== :ldiv)
 push!(statelist,deepcopy(state))
 
