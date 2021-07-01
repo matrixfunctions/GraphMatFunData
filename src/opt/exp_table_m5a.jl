@@ -1,7 +1,7 @@
 using GraphMatFun, LsqFit, LinearAlgebra
 include("exp_reset_all.jl");
 #include("simulationtools.jl");
-include("newsimulationtools.jl");
+include("simulationtools.jl");
 
 
 f=exp
