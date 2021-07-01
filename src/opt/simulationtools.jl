@@ -157,7 +157,7 @@ function init_state_mult!(state,graphname,mult;showmeta=false)
             println(" degree $(deg0-1)");
         end
 
-        state.params[:graphname]=string(graphname);
+        state.params[:graphname]="$(graphname)_m$(mult)"
         graph = Compgraph(state.eltype,graph);
         state.graph=graph;
         state.cref=cref;
@@ -232,8 +232,8 @@ function runcommand(s::OptSimulation,state)
 
     state.graph=graph # Set the output
     currentname=state.params[:graphname]
-    if (!contains(currentname,"+GN"))
-        state.params[:graphname]=currentname*"+GN";
+    if (!contains(currentname,"_opt"))
+        state.params[:graphname]=currentname*"_opt";
     end
 
     return state;
@@ -301,8 +301,8 @@ function runcommand(s::LMSimulation,state)
     state.graph=graph # Set the output
     @show typeof(graph)
     currentname=state.params[:graphname]
-    if (!contains(currentname,"+LM"))
-        state.params[:graphname]=currentname*"+LM";
+    if (!contains(currentname,"_opt"))
+        state.params[:graphname]=currentname*"_opt";
     end
     return state;
 
