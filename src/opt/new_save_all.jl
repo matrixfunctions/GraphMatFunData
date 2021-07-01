@@ -1,3 +1,18 @@
+using MD5
+function restricted_md5(fname)
+    if (!isfile(fname))
+        return randn(10);
+    end
+    f=open(fname,"r");
+    lines=readlines(fname);
+    for (i,line) in enumerate(lines)
+        if occursin("Created: ", line)
+            lines[i]=""
+        end
+    end
+    md5(join(lines,"\n"));
+end
+
 include("new_set_lists_all.jl");
 
 
