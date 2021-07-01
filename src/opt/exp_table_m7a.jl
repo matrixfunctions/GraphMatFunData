@@ -1,5 +1,5 @@
 using GraphMatFun, LsqFit, LinearAlgebra, GenericSVD,Random
-include("new_reset_all.jl");
+include("exp_reset_all.jl");
 #include("simulationtools.jl");
 include("newsimulationtools.jl");
 
@@ -67,5 +67,5 @@ sid0=init_state_mult!(deepcopy(base),:sid,m,showmeta=true)
 #     "sssssddssssddsssssssssssdddssdddssssdddssdddssssssssssdggdq")
 #
 
-include("new_print_all.jl");
-println("Run include(save_all.jl) if you want to save");
+include("exp_print_all.jl");
+println("Run include(exp_save_all.jl) if you want to save");
