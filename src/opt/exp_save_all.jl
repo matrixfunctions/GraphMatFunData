@@ -13,7 +13,7 @@ function restricted_md5(fname)
     md5(join(lines,"\n"));
 end
 
-include("new_set_lists_all.jl");
+include("exp_set_list_all.jl");
 
 
 println("Saving simulation");
@@ -27,7 +27,7 @@ for (i,state)=enumerate(state_list)
         name=state.params[:graphname]
         graph=state.graph;
         rho_str=replace(string(rho),"."=>"_");
-        fname=joinpath("simulations","newgraphs","exp_m$(m)_$(name)_$(rho_str).cgr");
+        fname=joinpath("..","..","data","exp","exp_m$(m)_$(name)_$(rho_str).cgr");
         err=Float64(showerr(state,output=false,n=state.params[:target_n]*2))
 
         isreal=false;
@@ -41,10 +41,21 @@ for (i,state)=enumerate(state_list)
             optimized=" optimized starting from "*replace(mono.params[:graphname], "+GN" => "");
         end
 
-        export_compgraph(g, fname;
+
+        tmpname = "/tmp/tmpfile.jl"
+        export_compgraph(g, tmpname;
                          fun="exp", dom="$(rho)D", err="$err",
                          order=get_topo_order(g)[1],
-                         descr="Matrix exponential with degree optimal form $optimized");
+                         descr="Matrix exponential with degree optimal form $optimized",
+                         user="Elias Jarlebring");
+
+        # Only save it if the file is actually different (beside time-stamp)
+        if (restricted_md5(tmpname) != restricted_md5(fname))
+            cp(tmpname,fname);
+        else
+           println("Skip saving $i (since file unchanged)");
+        end
+
 
     else
         println("Skip saving $i");
