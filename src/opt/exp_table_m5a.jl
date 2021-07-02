@@ -27,7 +27,7 @@ sid_org=init_state_mult!(deepcopy(base),:sid,m,showmeta=true)
 bbc_org=init_state_mult!(deepcopy(base),:bbc,m,showmeta=true)
 
 datadir=joinpath("..","..","data","exp");
-filename=joinpath(datadir,"exp_sastre_m4_opt_m4_0_69.cgr");
+filename=joinpath(datadir,"exp_sastre_m4_opt_rho0_69.cgr");
 sastre_org=init_state_file!(deepcopy(base),:sastre,filename,showmeta=true,
                             scale_and_square=true)
 

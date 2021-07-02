@@ -24,14 +24,14 @@ base.params[:opt_kwargs]=opt_kwargs;
 oldrho="1_68";
 datadir=joinpath("..","..","data","exp");
 # First the optimization free
-filename=joinpath(datadir,"exp_sid_m$(m)_rho$(oldrho).cgr");
+filename=joinpath(datadir,"exp_sid_m$(m).cgr");
 sid_org=init_state_file!(deepcopy(base),:sid,filename,showmeta=true)
 
-filename=joinpath(datadir, "exp_bbc_m$(m)_rho$(oldrho).cgr");
+filename=joinpath(datadir, "exp_bbc_m$(m).cgr");
 bbc_org=init_state_file!(deepcopy(base),:bbc,filename,showmeta=true)
 
-filename=joinpath(datadir,"exp_sastre_m$(m)_rho$(oldrho).cgr");
-sastre_org=init_state_file!(deepcopy(base),:sastre,filename,showmeta=true)
+filename=joinpath(datadir,"exp_sastre_m$(m-1).cgr");
+sastre_org=init_state_file!(deepcopy(base),:sastre,filename,showmeta=true,scale_and_square=true)
 
 
 #sastre_org.cref=get_degopt_crefs(sastre_org.graph);

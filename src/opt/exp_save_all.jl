@@ -26,10 +26,10 @@ for (i,state)=enumerate(state_list)
     if (!isnothing(state))
         name=state.params[:graphname]
         @show name
-        if contains(name,"_opt")
+        if contains(name,"_opt") || contains(name,"ps") || contains(name,"mono")
             graph=state.graph;
             rho_str=replace(string(rho),"."=>"_");
-            fname=joinpath("..","..","data","exp","exp_$(name)_m$(m)_rho$(rho_str).cgr");
+            fname=joinpath("..","..","data","exp","exp_$(name)_rho$(rho_str).cgr");
             err=Float64(showerr(state,output=false,n=state.params[:target_n]*2))
 
             isreal=false;
@@ -59,7 +59,7 @@ for (i,state)=enumerate(state_list)
             end
 
         else
-            println("Skip saving $name (since it is the non-optimized)");
+            println("Skip saving $name (since it is independent of the disk)");
         end
 
     else

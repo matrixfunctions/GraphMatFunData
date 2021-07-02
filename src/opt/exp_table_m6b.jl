@@ -23,52 +23,53 @@ base.params[:kickit_mode]=0;
 
 
 oldrho="2_22";
+datadir=joinpath("..","..","data","exp");
 # First the optimization free
-filename="simulations/newgraphs/exp_m$(m)_sid_$oldrho.cgr";
+filename=joinpath("exp_sid_m$(m).cgr";
 sid_org=init_state_file!(deepcopy(base),:sid,filename,showmeta=true)
 
-#filename="simulations/newgraphs/exp_m$(m)_bbc_$oldrho.cgr";
+#filename=joinpath("exp_bbc_m$(m)_rho$oldrho.cgr");
 #bbc_org=init_state_file!(deepcopy(base),:bbc,filename,showmeta=true)
 
-filename="simulations/newgraphs/exp_m$(m)_sastre_$oldrho.cgr";
+filename=joinpath("exp_sastre_m$(m).cgr");
 sastre_org=init_state_file!(deepcopy(base),:sastre,filename,showmeta=true)
 
 
 #sastre_org.cref=get_degopt_crefs(sastre_org.graph);
 
 
-filename="simulations/newgraphs/exp_m$(m)_ps_$oldrho.cgr";
+filename=joinpath("exp_ps_m$(m)_rho$oldrho.cgr");
 ps_org=init_state_file!(deepcopy(base),:ps,filename,showmeta=true)
 
 
-filename="simulations/newgraphs/exp_m$(m)_mono_$oldrho.cgr";
+filename=joinpath("exp_mono_m$(m)_rho$oldrho.cgr");
 mono_org=init_state_file!(deepcopy(base),:mono,filename,showmeta=true)
 
 
-filename="simulations/newgraphs/exp_m$(m)_mono+GN_$oldrho.cgr";
+filename=joinpath("exp_mono_m$(m)_opt_rho$oldrho.cgr");
 mono0=init_state_file!(deepcopy(base),:mono,filename,showmeta=true)
 (mono,simlist,commandlist)=
      run_sequence(mono0,"dddddddddddddddddddddsssGGGssdddssssdddddsssssssdddsdddssssq");
 
-filename="simulations/newgraphs/exp_m$(m)_ps+GN_$oldrho.cgr";
+filename=joinpath("exp_ps_m$(m)_opt_rho$oldrho.cgr");
 ps0=init_state_file!(deepcopy(base),:ps,filename,showmeta=true)
 (ps,simlist,commandlist)=
      run_sequence(ps0,
      "sq");
 
-filename="simulations/newgraphs/exp_m$(m)_sastre+GN_$oldrho.cgr";
+filename=joinpath("exp_sastre_$(m)_opt_rho$oldrho.cgr");
 sastre0=init_state_file!(deepcopy(base),:sastre,filename,showmeta=true)
 (sastre,simlist,commandlist)=
      run_sequence(sastre0,
                   "ddddddddddsdddddddddddssGGGssddddsdddddsssdddsssq");
 
-filename="simulations/newgraphs/exp_m$(m)_sid+GN_$oldrho.cgr";
+filename=joinpath("exp_sid_m$(m)_opt_rho$oldrho.cgr");
 sid0=init_state_file!(deepcopy(base),:sid,filename,showmeta=true)
 (sid,simlist,commandlist)=
      run_sequence(sid0,
      "ddddddddddsdddddddddddssGGGssddddsdddddsssdddsssdddsssddddsssssdsddsq")
 
-#filename="simulations/newgraphs/exp_m$(m)_bbc+GN_$oldrho.cgr";
+#filename=joinpath("exp_bbc+GN_m$(m)_rho$oldrho.cgr");
 #bbc0=init_state_file!(deepcopy(base),:bbc,filename,showmeta=true)
 #(bbc,simlist,commandlist)=
 #     run_sequence(bbc0,
