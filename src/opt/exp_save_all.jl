@@ -39,8 +39,8 @@ for (i,state)=enumerate(state_list)
             end
             println("Saving $name $fname isreal=$isreal");
             optimized=""
-            if (contains(name,"+GN"))
-                optimized=" optimized starting from "*replace(mono.params[:graphname], "+GN" => "");
+            if (contains(name,"_opt"))
+                optimized=" optimized starting from "*replace(mono.params[:graphname], "_opt" => "");
             end
 
 
@@ -48,18 +48,18 @@ for (i,state)=enumerate(state_list)
             export_compgraph(g, tmpname;
                              fun="exp", dom="$(rho)D", err="$err",
                              order=get_topo_order(g)[1],
-                             descr="Matrix exponential with degree optimal form $optimized",
+                             descr="Matrix exponential approximation with degree-optimal form $(optimized). This graph contains redundancies. Run compress_graph! before generating code.",
                              user="Elias Jarlebring");
 
             # Only save it if the file is actually different (beside time-stamp)
             if (restricted_md5(tmpname) != restricted_md5(fname))
-                cp(tmpname,fname);
+                cp(tmpname,fname,force=true);
             else
-                println("Skip saving $i (since file unchanged)");
+                println("Skip saving $name (since file unchanged)");
             end
 
         else
-            println("Skip saving $i (since it is the non-optimized)");
+            println("Skip saving $name (since it is the non-optimized)");
         end
 
     else

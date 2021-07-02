@@ -1,9 +1,9 @@
 %# Representation of a computation graph
 %# Function: exp
-%# Matrix exponential with degree optimal form 
+%# Matrix exponential approximation with degree-optimal form  optimized starting from mono_m4. This graph contains redundancies. Run compress_graph! before generating code.
 %# Domain: 0.69D
 %# Error: 1.2104064656022286e-15
-%# Created: 2021-07-01T21:30:11.625 by user Elias Jarlebring
+%# Created: 2021-07-02T09:00:40.491 by user Elias Jarlebring
 
 graph_coeff_type="BigFloat";
 
