@@ -17,7 +17,7 @@ opt_kwargs=Dict(:logger=> 0,:γ0 => 0.5,:droptol => droptol0,
                 :linlsqr => :real_svd,:maxit => its)
 base = init_state_mult(f,rho,n,m; eltype=Complex{BigFloat})
 base.params[:n]=n;
-base.params[:target_n]=n_target;
+base.params[:target_n]=target_n;
 base.params[:opt_kwargs]=opt_kwargs;
 
 
@@ -26,7 +26,8 @@ sid_org=init_state_mult!(deepcopy(base),:sid,m,showmeta=true)
 
 bbc_org=init_state_mult!(deepcopy(base),:bbc,m,showmeta=true)
 
-filename="simulations/newgraphs/exp_m4_sastre+GN_0_69.cgr"
+datadir=joinpath("..","..","data","exp");
+filename=joinpath(datadir,"exp_sastre_m4_opt_m4_0_69.cgr");
 sastre_org=init_state_file!(deepcopy(base),:sastre,filename,showmeta=true,
                             scale_and_square=true)
 

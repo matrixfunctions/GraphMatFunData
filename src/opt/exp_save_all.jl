@@ -29,7 +29,7 @@ for (i,state)=enumerate(state_list)
         if contains(name,"_opt")
             graph=state.graph;
             rho_str=replace(string(rho),"."=>"_");
-            fname=joinpath("..","..","data","exp","exp_$(name)_m$(m)_$(rho_str).cgr");
+            fname=joinpath("..","..","data","exp","exp_$(name)_m$(m)_rho$(rho_str).cgr");
             err=Float64(showerr(state,output=false,n=state.params[:target_n]*2))
 
             isreal=false;
