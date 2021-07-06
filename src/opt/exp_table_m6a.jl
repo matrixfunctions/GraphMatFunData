@@ -21,6 +21,9 @@ base.params[:target_n]=target_n;
 base.params[:opt_kwargs]=opt_kwargs;
 base.params[:kickit_mode]=1;
 
+
+
+
 # First the optimization free
 sid_org=init_state_mult!(deepcopy(base),:sid,m,showmeta=true)
 
@@ -40,10 +43,10 @@ mono_org=init_state_mult!(deepcopy(base),:mono,m,showmeta=true)
 
 
 (mono,simlist,commandlist)=
-     run_sequence(mono_org,"sknsssssssssddssddsssssssssssssdsddGGssssdddsGssdddsssdddssssddsssssssssssssddsssssddddsddddssssq");
+     run_sequence(mono_org,"sknsssssssssddssddsssssssssssssdsddGGssssdddsGssdddsssdddssssdsssssdddssdsdsssdddddddddsgggggssggssssssssssGGGGssssssssssq");
 
 (ps,simlist,commandlist)=
-     run_sequence(ps_org, "kssnsKsssdddddsdddsGGsssGssdddssssssddssdddddsssddddsssddddsssssssssssddddddssGgsssssssq");
+     run_sequence(ps_org, "kssnsssssddssddsddsddsssddsddsssssssssssssssssssssssssskssssssssddssssssddssssssssddssssssssddsddsddsddsddssssssssssddsssssssssddssdkssssssskssssssssssq");
 
 
 (sastre,simlist,commandlist)=
