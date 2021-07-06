@@ -25,51 +25,54 @@ base.params[:kickit_mode]=1;
 oldrho="3_59";
 oldrho2="2_7";
 # First the optimization free
-filename="simulations/newgraphs/exp_m$(m)_sid_$oldrho.cgr";
+datadir=joinpath("..","..","data","exp");
+filename=joinpath(datadir,"exp_sid_m$(m).cgr");
 sid_org=init_state_file!(deepcopy(base),:sid,filename,showmeta=true)
 
-#filename="simulations/newgraphs/exp_m$(m)_bbc_$oldrho.cgr";
+#filename=joinpath(datadir,"exp_bbc_m$(m)_rho$oldrho.cgr");
 #bbc_org=init_state_file!(deepcopy(base),:bbc,filename,showmeta=true)
 
-filename="simulations/newgraphs/exp_m$(m)_sastre_$oldrho.cgr";
-sastre_org=init_state_file!(deepcopy(base),:sastre,filename,showmeta=true)
+filename=joinpath(datadir,"exp_sastre_m6.cgr");
+sastre_org=init_state_file!(deepcopy(base),:sastre,filename,showmeta=true,
+                            scale_and_square=true)
 
 
 #sastre_org.cref=get_degopt_crefs(sastre_org.graph);
 
 
-filename="simulations/newgraphs/exp_m$(m)_ps_$oldrho.cgr";
+filename=joinpath(datadir,"exp_ps_m$(m)_rho$oldrho.cgr");
 ps_org=init_state_file!(deepcopy(base),:ps,filename,showmeta=true)
 
 
-filename="simulations/newgraphs/exp_m$(m)_mono_$oldrho.cgr";
+filename=joinpath(datadir,"exp_mono_m$(m)_rho$oldrho.cgr");
 mono_org=init_state_file!(deepcopy(base),:mono,filename,showmeta=true)
 
 
-filename="simulations/newgraphs/exp_m$(m-1)_mono+GN_$(oldrho2).cgr";
+filename=joinpath(datadir,"exp_mono_m$(m-1)_opt_rho$(oldrho2).cgr");
 mono0=init_state_file!(deepcopy(base),:mono,filename,showmeta=true,scale_and_square=true)
 (mono,simlist,commandlist)=
      run_sequence(mono0,"ddddddddddddddddddddddddddsssGGGsssdddsddsssssdddsssdddsssssq");
 
-#filename="simulations/newgraphs/exp_m$(m)_ps+GN_$oldrho.cgr";
+#filename=joinpath(datadir,"exp_ps_m$(m)_opt_rho$oldrho.cgr");
 #ps0=init_state_file!(deepcopy(base),:ps,filename,showmeta=true)
 #(ps,simlist,commandlist)=
 #     run_sequence(ps0,
 #     "sq");
 
-filename="simulations/newgraphs/exp_m$(m)_sastre+GN_$oldrho.cgr";
+filename=joinpath(datadir,"exp_sastre_m$(m)_opt_rho$oldrho.cgr");
 sastre0=init_state_file!(deepcopy(base),:sastre,filename,showmeta=true)
 (sastre,simlist,commandlist)=
      run_sequence(sastre0,
                   "ddddddddddsdddddddddddssGGGssddddsdddddsdsssssdddssssddssssddsgggsssssGGGssq");
 
-filename="simulations/newgraphs/exp_m$(m)_sid+GN_$oldrho.cgr";
+filename=joinpath(datadir,"exp_sid_m$(m)_opt_rho$oldrho.cgr");
+filename=joinpath(datadir,"exp_sid_m$(m).cgr");
 sid0=init_state_file!(deepcopy(base),:sid,filename,showmeta=true)
 (sid,simlist,commandlist)=
      run_sequence(sid_org,
-     "")
+     "ddddsddddskssssGsssdddddddddssdddsssddsddssssddsddsddsssssGGssdddsdssssdgggggggggsdsssGGGsGGGGGGGgssdddggggggggssssssGGGGGGGGsssdddsddsddgggggggggsssssssGGGGGGGGGsssdddsddggggggssssGGGGGGssssssssddq")
 
-#filename="simulations/newgraphs/exp_m$(m)_bbc+GN_$oldrho.cgr";
+#filename=joinpath(datadir,"exp_bbc_m$(m)_opt_rho$oldrho.cgr");
 #bbc0=init_state_file!(deepcopy(base),:bbc,filename,showmeta=true)
 #(bbc,simlist,commandlist)=
 #     run_sequence(bbc0,

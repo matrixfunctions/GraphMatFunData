@@ -26,7 +26,9 @@ sid_org=init_state_mult!(deepcopy(base),:sid,m,showmeta=true)
 
 #bbc_org=init_state_mult!(deepcopy(base),:bbc,m,showmeta=true)
 
-filename="simulations/newgraphs/exp_m6_sastre_2_7.cgr"
+datadir=joinpath("..","..","data","exp");
+#filename=joinpath(datadir,"exp_sastre_m6_opt_rho2_7.cgr");
+filename=joinpath(datadir,"exp_sastre_m6.cgr");
 sastre_org=init_state_file!(deepcopy(base),:sastre,filename,showmeta=true,
                             scale_and_square=true)
 #filename="simulations/newgraphs/exp_m4_sastre+GN_0_69.cgr"
@@ -43,13 +45,13 @@ mono_org=init_state_mult!(deepcopy(base),:mono,m,showmeta=true)
 
 
 (mono,simlist,commandlist)=
-     run_sequence(mono_org,"sssGGGssdddsssddssdddskKssddddddssssdddssssdddsssddddssdddsssssssssddssssdddssssddddsssdddsdddsggggggsssssGGsssssssssGGGGssq");
+     run_sequence(mono_org,"sssGGGssdddsssddssdddskKssddssdddddssssddddssdddsssddddssssdddssssssddsddsssddssddsdsgggggggdssssssGGGGGGGsssq");
 
 (ps,simlist,commandlist)=
-     run_sequence(ps_org, "ksssGGGssdddddddddsddddddsdddddddddddsssddddddddddsssssssdddddsssssssssssssssssssssssssssq");
+     run_sequence(ps_org, "ksssGGGssdddddddddsddddddsdddddddddddsssddddddddddssgggggsssGGGssssGGsddsssddssddssskssddssddsssdddsssdddsggggggsssssssssssggsggssssssskssssgGGGGGGssssssssssssssGGGGGsssq");
 
 
-filename="simulations/newgraphs/exp_m6_sastre+GN_2_7.cgr"
+filename=joinpath(datadir,"exp_sastre_m6_opt_rho2_7.cgr");
 sastre0=init_state_file!(deepcopy(base),:sastre,filename,showmeta=true,
                             scale_and_square=true)
 (sastre,simlist,commandlist)=

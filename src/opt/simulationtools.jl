@@ -337,6 +337,11 @@ function runcommand(s::KickIt,state)
         vals=get_coeffs(state.graph,cref);
         vals .+= 0.0001
         set_coeffs!(state.graph,vals,cref);
+    elseif (s.mode == 3)
+        cref=[x[end][2][1]];
+        vals=get_coeffs(state.graph,cref);
+        vals=vals .+ 0.0001*fake_randn(random_state,size(vals,1));
+        set_coeffs!(state.graph,vals,cref);
     else
 
         println("Unknown Kickit Mode");
