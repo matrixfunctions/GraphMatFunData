@@ -1,9 +1,9 @@
 %# Representation of a computation graph
 %# Function: exp
 %# Matrix exponential approximation with degree-optimal form . This graph contains redundancies. Run compress_graph! before generating code.
-%# Domain: 1.68D
-%# Error: 6.527918582701685e-7
-%# Created: 2021-07-06T17:06:43.222 by user Elias Jarlebring
+%# Domain: 1.9D
+%# Error: 3.971525889851632e-6
+%# Created: 2021-07-06T18:18:30.857 by user Elias Jarlebring
 
 graph_coeff_type="BigFloat";
 
