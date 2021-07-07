@@ -36,25 +36,25 @@ mono_org=init_state_mult!(deepcopy(base),:mono,m,showmeta=true)
 
 
 (mono,simlist,commandlist)=
-     run_sequence(mono_org,"sGGGssddsddsddsddsggggggssssssGGGssssssssddsddsdsgggggggsdssssssssssssssssGGGsGGsGGsssssssdddsssssssssssssq");
+     run_sequence(mono_org,"sGGGssddsddsddsddsggggggssssssGGGssssssssddsddsdsgggggggsdssssssssssssssssGGGsGGsGGsssssssdddssssssssssssszq");
 
 (ps,simlist,commandlist)=
      run_sequence(ps_org,
-     "sssssssssssddsssddssssdssGgggssdsssssssssssssDdgGGssssddssssssssssssssssddsssssssssssddssssssssssssddsssssssddsssssssssssssddgggssssssssssGssGGGssssssgggsdsssssssssssssssssssssssssddsssssssssssssssssssssssssssssssssddsssssssssssssssssssssssddssssddssssssddssddDssdggggsssssGssGGGGGGGsGsssssdsgggggggsddggsssssGGGGGGGsssssssssssssdsdsq")
+     "sssssssssssddsssddssssdssGgggssdsssssssssssssDdgGGssssddssssssssssssssssddsssssssssssddssssssssssssddsssssssddsssssssssssssddgggssssssssssGssGGGssssssgggsdsssssssssssssssssssssssssddsssssssssssssssssssssssssssssssssddsssssssssssssssssssssssddssssddssssssddssddDssdggggsssssGssGGGGGGGsGsssssdsgggggggsddggsssssGGGGGGGsssssssssssssdsdszq")
 
 
 (sastre,simlist,commandlist)=
      run_sequence(sastre_org,
-                  "sssssddssssddsssssssssssdddssdddssssdddssdddsssNsssdddssssssssq");
+                  "sssssddssssddsssssssssssdddssdddssssdddssdddsssNsssdddsssssssszq");
 
 
 (sid,simlist,commandlist)=
      run_sequence(sid_org,
-     "sssssddssssddsssssssssssdddssdddssssdddssdddsssNsssdddsssssssssdddssssddsdsdssddsddsddsddsddsddsddsddsNssdsq")
+     "sssssddssssddsssssssssssdddssdddssssdddssdddsssNsssdddsssssssssdddssssddsdsdssddsddsddsddsddsddsddsddsNssdszq")
 
 (bbc,simlist,commandlist)=
      run_sequence(bbc_org,
-     "ssssdddssssslddsllddssssssssssssddsssssssssddsssssssssdgggsssssssssssGGGsssssdddssssssssssq")
+     "ssssdddssssslddsllddssssssssssssddsssssssssddsssssssssdgggsssssssssssGGGsssssdddsssssssssszq")
 
 
 include("exp_print_all.jl");

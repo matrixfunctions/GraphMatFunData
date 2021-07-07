@@ -27,7 +27,7 @@ sid_org=init_state_mult!(deepcopy(base),:sid,m,showmeta=true)
 bbc_org=init_state_mult!(deepcopy(base),:bbc,m,showmeta=true)
 
 datadir=joinpath("..","..","data","exp");
-filename=joinpath(datadir,"exp_sastre_m4_opt_rho0_69.cgr");
+filename=joinpath(datadir,"exp_sastre_m4.cgr");
 sastre_org=init_state_file!(deepcopy(base),:sastre,filename,showmeta=true,
                             scale_and_square=true)
 
@@ -50,15 +50,17 @@ mono_org=init_state_mult!(deepcopy(base),:mono,m,showmeta=true)
      "snsssssssssddssddsssssssssssssdssddssssssssssssssddsddssNssNssdssdsssddssssssssssssssssssssddssssssddsssssssdddsssssssNssdssssssssddssssssssssdssssq");
 
 
+filename=joinpath(datadir,"exp_sastre_m4_opt_rho0_69.cgr");
+sastre_prev=init_state_file!(deepcopy(base),:sastre,filename,showmeta=true,
+                            scale_and_square=true)
 
 (sastre,simlist,commandlist)=
-     run_sequence(sastre_org,
+     run_sequence(sastre_prev,
                   "sssnssNdddddssdddssGGssssdddssssddsssssddsddssddsssssq");
-
 
 (sid,simlist,commandlist)=
      run_sequence(sid_org,
-     "sssssddssssddsssssssssssdddssdddssssdddssdddsssNsssdddsssssssssdddssssddsdssssssq")
+     "sssssddssssddsssssssssssdddssdddssssdddssdddsssNsssdddsssssssssddds5.7e-18sssddsdssssssq")
 
 (bbc,simlist,commandlist)=
      run_sequence(bbc_org,

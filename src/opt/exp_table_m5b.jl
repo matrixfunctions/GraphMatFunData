@@ -59,8 +59,9 @@ ps0=init_state_file!(deepcopy(base),:ps,filename,showmeta=true)
 filename=joinpath(datadir,"exp_sastre_m$(m)_opt_rho$oldrho.cgr");
 sastre0=init_state_file!(deepcopy(base),:sastre,filename,showmeta=true)
 (sastre,simlist,commandlist)=
-     run_sequence(sastre0,
-                  "skssssssssssdddddsssddddsssssssdddssssssssddddssssdddssssssssssdddsssssssssdddsssssssssssddssssssssssssssq");
+run_sequence(sastre0,
+             "skssssssssssdddddsssddddsssssssdddssssssssddddssssdddssssssssssdddsssssssssdddsssssssssssddq");
+#                  "skssssssssssdddddsssddddsssssssdddssssssssddddssssdddssssssssssdddsssssssssdddsssssssssssddssssssssssssssq");
 
 filename=joinpath(datadir,"exp_sid_m$(m)_opt_rho$oldrho.cgr");
 sid0=init_state_file!(deepcopy(base),:sid,filename,showmeta=true)

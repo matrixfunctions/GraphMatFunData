@@ -19,7 +19,7 @@ base = init_state_mult(f,rho,n,m; eltype=Complex{BigFloat})
 base.params[:n]=n;
 base.params[:target_n]=target_n;
 base.params[:opt_kwargs]=opt_kwargs;
-base.params[:kickit_mode]=2;
+base.params[:kickit_mode]=3;
 
 
 oldrho="6_0";
@@ -55,11 +55,17 @@ oldrho2="3_59";
 #     run_sequence(mono0,"ksssssdddsssssddddssssssddddddsssssssdddsssssssssssdddssssGGsssddddggggggssssssssGGGsssGGGssssdddddggggggggsssssssGGGsGGGGGssssdddddggggggggssssssssGGGsGGGGGsssssddddgggggggsssGGGGGGGssssssdddggggggggggssssssggssssssGsGsGsGsGGsGGsGGGsGGsss");
 #
 
-filename="simulations/graphs/exp_m8_mono_taylor_13_5.cgr";
-mono0=init_state_file!(deepcopy(base),:mono,filename,showmeta=true)
-mono0.cref=mono0.cref[8:end-8]
+datadir=joinpath("..","..","data","exp");
+#filename="simulations/graphs/exp_m8_mono_taylor_13_5.cgr";
+filename=joinpath(datadir,"exp_mono_m7_opt_rho6_0.cgr");
+
+mono0=init_state_file!(deepcopy(base),:mono,filename,showmeta=true,
+                       scale_and_square=true)
+#mono0.cref=mono0.cref[8:end-8]
 (mono,simlist,commandlist)=
-     run_sequence(mono0,"sssGGGsssdddsddsssssdddsssdddsssssq");
+run_sequence(mono0,"kssssGGGssgddssssssddddggggggggggsssGGGssssGGGssGGGGsssssksssdddsssssddssssssdddsdgggggggsssssGGGGsGGGssssssNssGssddssssddssssdggggggggsssssGGGGssssGGGGsssddsdsdgggggggggggssssGGGGGGGGGGsGssssggggggggdsdsdskssGGGGGGGGssNssq");
+#sGsGsGGGssssssssddsssGGGGGGsssksssssNsq
+#             "sssGGGsssdddsddsssssdddsssdddsssssq");
 
 #filename="simulations/newgraphs/exp_m$(m-1)_mono+GN_$(oldrho).cgr";
 #mono0=init_state_file!(deepcopy(base),:mono,filename,showmeta=true,scale_and_square=true)
