@@ -1,4 +1,4 @@
-using GenericSVD, DelimitedFiles
+using GenericSVD, DelimitedFiles,Random
 # State of the
 mutable struct State
     f   # function
@@ -85,6 +85,12 @@ function KickIt(state::State,factor)
     @show mode
     return KickIt(factor,mode);
 
+end
+struct ZeroNormalize
+end
+
+struct ShowTheta
+    theta_guess;
 end
 
 
@@ -214,6 +220,12 @@ function initcommand(control,state)
         return KickIt(state,1e-9);
     elseif (control=="K")
         return KickIt(state,1e-6);
+    elseif (control=="z")
+        return ZeroNormalize();
+    elseif (control=="t")
+        return ShowTheta(Nothing);
+    elseif (control=="T")
+        return ShowTheta(0.3);
     else
         return NoOp();
     end
@@ -350,6 +362,44 @@ function runcommand(s::KickIt,state)
     return state;
 end
 
+function runcommand(s::ZeroNormalize,state)
+    graph=state.graph;
+    print("Diff before:"*string(eval_graph(graph,0)-state.f(0)));
+    degopt=Degopt(graph);
+    x=degopt.x;
+    y=degopt.y;
+    y .*= state.f(0)/eval_graph(graph,0);
+    (graph,_)=graph_degopt(x,y);
+    set_coeffs!(state.graph,get_coeffs(graph));
+    err_after=eval_graph(graph,0)-state.f(0);
+    println(" after $err_after");
+    return state;
+end
+
+function runcommand(s::ShowTheta,state)
+
+    graph=state.graph;
+    try
+
+        theta_guess=state.params[:rho];
+        if (s.theta_guess != Nothing)
+            theta_guess = s.theta_guess
+        end
+
+        (ff,theta)=compute_bwd_theta_exponential(graph,coefftype=BigFloat,
+                                                tolerance=eps()/2,theta_init=big(theta_guess));
+
+        @show theta
+        @show ff(0)
+        @show ff(1e-10)
+        @show ff(theta_guess)
+    catch e
+        println("Unable to compute theta: $(s.theta_guess)");
+    end
+
+    return state;
+
+end
 
 
 function run_sequence(state,predefsims="");
@@ -447,7 +497,7 @@ mutable struct FakeRandomState
 end
 function fake_randn(f::FakeRandomState,s)
 
-    Random.seed!(f.k);
+    #Random.seed!(f.k);
     data=Dict(1=> [0.20154471885274503],
               2=> [0.20154471885274503;1.0340551364982935],
               3=> [0.20154471885274503;1.0340551364982935;-0.5035805877040641]);
