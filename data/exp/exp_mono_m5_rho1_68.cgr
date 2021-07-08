@@ -3,7 +3,7 @@
 %# Matrix exponential approximation with degree-optimal form . This graph contains redundancies. Run compress_graph! before generating code.
 %# Domain: 1.68D
 %# Error: 0.03311234230452918
-%# Created: 2021-07-06T17:06:43.146 by user Elias Jarlebring
+%# Created: 2021-07-07T20:11:02.268 by user Elias Jarlebring
 
 graph_coeff_type="BigFloat";
 
