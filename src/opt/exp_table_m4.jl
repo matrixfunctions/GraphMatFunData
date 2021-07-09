@@ -52,9 +52,10 @@ mono_org=init_state_mult!(deepcopy(base),:mono,m,showmeta=true)
      run_sequence(sid_org,
      "sssssddssssddsssssssssssdddssdddssssdddssdddsssNsssdddsssssssssdddssssddsdsdssddsddsddsddsddsddsddsddsNssdszq")
 
+
 (bbc,simlist,commandlist)=
      run_sequence(bbc_org,
-     "ssssdddssssslddsllddssssssssssssddsssssssssddsssssssssdgggsssssssssssGGGsssssdddsssssssssszq")
+     "sssSSddddddddddddSSSSSSGGGSSddggggggggsssSSSSSSSSSGGGGGGGGSSzq")
 
 
 include("exp_print_all.jl");

@@ -63,7 +63,7 @@ mono0=init_state_file!(deepcopy(base),:mono,filename,showmeta=true,
                        scale_and_square=true)
 #mono0.cref=mono0.cref[8:end-8]
 (mono,simlist,commandlist)=
-run_sequence(mono0,"kssssGGGssgddssssssddddggggggggggsssGGGssssGGGssGGGGsssssksssdddsssssddssssssdddsdgggggggsssssGGGGsGGGssssssNssGssddssssddssssdggggggggsssssGGGGssssGGGGsssddsdsdgggggggggggssssGGGGGGGGGGsGssssggggggggdsdsdskssGGGGGGGGssNssq");
+run_sequence(mono0,"kssssGGGssgddssssssddddggggggggggsssGGGssssGGGssGGGGsssssksssdddsssssddssssssdddsdgggggggsssssGGGGsGGGssssssNssGssddssssddssssdggggggggsssssGGGGssssGGGGsssddsdsdgggggggggggssssGGGGGGGGGGsGssssggggggggdsdsdskssGGGGGGGGssNsszq");
 #sGsGsGGGssssssssddsssGGGGGGsssksssssNsq
 #             "sssGGGsssdddsddsssssdddsssdddsssssq");
 

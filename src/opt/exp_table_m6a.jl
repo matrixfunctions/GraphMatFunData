@@ -43,20 +43,20 @@ mono_org=init_state_mult!(deepcopy(base),:mono,m,showmeta=true)
 
 
 (mono,simlist,commandlist)=
-     run_sequence(mono_org,"sknsssssssssddssddsssssssssssssdsddGGssssdddsGssdddsssdddssssdsssssdddssdsdsssdddddddddsgggggssggssssssssssGGGGssssssssssq");
+     run_sequence(mono_org,"sknsssssssssddssddsssssssssssssdsddGGssssdddsGssdddsssdddssssdsssssdddssdsdsssdddddddddsgggggssggssssssssssGGGGsssssssssszSSSSSzSSSSzq");
 
 (ps,simlist,commandlist)=
-     run_sequence(ps_org, "kssnsssssddssddsddsddsssddsddsssssssssssssssssssssssssskssssssssddssssssddssssssssddssssssssddsddsddsddsddssssssssssddsssssssssddssdkssssssskssssssssssq");
+     run_sequence(ps_org, "kSSdddddSSSGGGSddddSSSSSSSkSSdddSSSSSSSdddSSSSSdddzSssddSdSSSddSddSSssSddSSSdddsssskSSzq");
 
 
 (sastre,simlist,commandlist)=
      run_sequence(sastre_org,
-                  "sssnssNdddddddddddddssGGGsssddddddddsssdgggggssssssGGssssssssdsssGGssssddsddsddsssssssssq");
+                  "sddddddSSggGGGGGSsddssddSddSSSddSddSSSdddSSSdsdsdgggggsSssssGGGGGsSSzSq");
 
 
 (sid,simlist,commandlist)=
      run_sequence(sid_org,
-     "sssnssNdddddddddddddssGGGsssddsddsddsddsddddsdddsddddddssssddsssssddsssssddssssssq")
+     "sdddddddddddddSdddddddddSdddSSSGGGdddSddSSddSddSSSSSzddSSSSSSq");
 
 #(bbc,simlist,commandlist)=
 #     run_sequence(bbc_org,

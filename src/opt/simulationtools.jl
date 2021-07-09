@@ -41,10 +41,11 @@ end
 struct OptSimulation
     kwargs
     cref
+    special_case
 end
 
-function OptSimulation(s::State)
-    return OptSimulation(s.params[:opt_kwargs],s.cref);
+function OptSimulation(s::State;special_case=0)
+    return OptSimulation(s.params[:opt_kwargs],s.cref,special_case);
 end
 
 # Levenberg-Marquard simulations using LsqFit.curve_fit
@@ -202,6 +203,10 @@ end
 function initcommand(control,state)
     if (control == "s")
         return OptSimulation(state);
+    elseif (control == "S")
+        return OptSimulation(state;special_case=1);
+    elseif (control == "2")
+        return OptSimulation(state;special_case=2);
     elseif (control == "l")
         return LMSimulation(state);
     elseif (control == "g")
@@ -237,6 +242,17 @@ function runcommand(s::OptSimulation,state)
     f=state.f;
     graph=deepcopy(state.graph);
     discr=state.discr;
+    if (s.special_case == 1)
+        discr=deepcopy(discr);
+        push!(discr,zero(eltype(discr)));
+    end
+    if (s.special_case == 2)
+        discr0=discr;
+        discr=deepcopy(discr);
+        append!(discr,discr0/2);
+        append!(discr,0.1*discr0/maximum(abs.(discr0)));
+    end
+
     cref=s.cref;
 
     opt_gauss_newton!(graph,f,discr;logger=1,
@@ -354,6 +370,37 @@ function runcommand(s::KickIt,state)
         vals=get_coeffs(state.graph,cref);
         vals=vals .+ 0.0001*fake_randn(random_state,size(vals,1));
         set_coeffs!(state.graph,vals,cref);
+    elseif s.mode ==4
+        y_cref=get_degopt_crefs(state.graph)[2];
+        # Kick the y-degopt vector
+        Ha=[ -0.000599134   1.00256       0.0          0.0           0.0         0.0         0.0
+ -0.000118639  -0.000778662   0.999709     0.0           0.0         0.0         0.0
+ -1.09012f-5   -0.000246103  -0.00126751   0.999822      0.0         0.0         0.0
+ -1.08452f-6   -3.92744f-5   -0.00017262  -0.00189144    0.999981    0.0         0.0
+  5.84573f-7   -4.80433f-6   -2.1741f-5   -0.000177471  -0.00239572  0.999999    0.0
+  1.25109f-7   -1.05495f-7   -2.48853f-6  -4.14857f-5    4.32646f-5  0.00116684  1.0
+             ];
+        Hb=[-0.000599134  1.00256   0.0        0.0         0.0          0.0         0.0
+ -0.000838943  1.0011    0.0166752  0.0         0.0          0.0         0.0
+ -0.0019134    1.00034   0.0377923  0.00100261  0.0          0.0         0.0
+ -0.00242811   0.999187  0.0604852  0.00308486  6.53079f-5   0.0         0.0
+  0.00116408   0.997916  0.0755767  0.0051393   0.000163854  6.79643f-8  0.0
+ -8.09922f-8   0.997063  0.0954523  0.00867858  0.000495314  1.32541f-5  3.94245f-8]
+        crand=[0.999999803981589
+               1.0006179487544273
+               0.4979281278966493
+               0.16592558923333828
+               0.03871151836039848
+               0.0061833894649526416
+               0.0006066317390421412
+               3.0487323320460782e-5]
+        (gtmp,cref)=graph_degopt(Degopt(Ha,Hb,crand));
+        cvals=get_coeffs(gtmp,cref);
+        set_coeffs!(state.graph,cvals,cref);
+        #p=min(size(y_cref,1),size(crand,1));
+        #set_coeffs!(state.graph,crand[1:p],y_cref);
+
+
     else
 
         println("Unknown Kickit Mode");

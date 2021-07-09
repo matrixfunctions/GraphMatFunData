@@ -43,11 +43,11 @@ mono_org=init_state_mult!(deepcopy(base),:mono,m,showmeta=true)
 
 
 (mono,simlist,commandlist)=
-     run_sequence(mono_org,"snsssssssssddssddsssssssssssssdsddGGssssq");
+     run_sequence(mono_org,"snsssssssssddssddsssssssssssssdsddGGsssszssddssddskskSssddssddksSSzSKssSzq");
 
 (ps,simlist,commandlist)=
      run_sequence(ps_org,
-     "snsssssssssddssddsssssssssssssdssddssssssssssssssddsddssNssNssdssdsssddssssssssssssssssssssddssssssddsssssssdddsssssssNssdssssssssddssssssssssdssssq");
+     "snssssssGGGSddSddSddSSsStddsddsSddSddsddSSSggggggggssSSSSSSGGGGGGGGsSSddsddSddSddSSSddSddStztq");
 
 
 filename=joinpath(datadir,"exp_sastre_m4_opt_rho0_69.cgr");
@@ -56,15 +56,15 @@ sastre_prev=init_state_file!(deepcopy(base),:sastre,filename,showmeta=true,
 
 (sastre,simlist,commandlist)=
      run_sequence(sastre_prev,
-                  "sssnssNdddddssdddssGGssssdddssssddsssssddsddssddsssssq");
+                  "SSSnSSNdddddSSdddSSGGSSSSdddSSSSddSSSSSddSddSSddSSSSSzsSzq");
 
 (sid,simlist,commandlist)=
      run_sequence(sid_org,
-     "sssssddssssddsssssssssssdddssdddssssdddssdddsssNsssdddsssssssssddds5.7e-18sssddsdssssssq")
+     "sssssddssssddsssssssssssdddssdddssssdddssdddsssNsssdddsssssssssddds5.7e-18sssddsdsssssszq")
 
 (bbc,simlist,commandlist)=
      run_sequence(bbc_org,
-     "sssssddssssddsssssssssssdddssdddssssdddssdddssssssssssdggdq")
+     "ssssdddddddddsSddSgggGGGGGGSSdddSSddSdddgggggggSSSSGGGGGGGSSSdddSSSSddSzq")
 
 
 include("exp_print_all.jl");

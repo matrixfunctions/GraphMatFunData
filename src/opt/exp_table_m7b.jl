@@ -51,26 +51,26 @@ mono_org=init_state_file!(deepcopy(base),:mono,filename,showmeta=true)
 filename=joinpath(datadir,"exp_mono_m$(m-1)_opt_rho$(oldrho2).cgr");
 mono0=init_state_file!(deepcopy(base),:mono,filename,showmeta=true,scale_and_square=true)
 (mono,simlist,commandlist)=
-     run_sequence(mono0,"ddddddddddddddddddddddddddsssGGGsssdddsddsssssdddsssdddsssssq");
+     run_sequence(mono0,"ddddddddddddddddddddddddddsssGGGsssdddsddsssssdddsssdddssssstSzq");
 
-#filename=joinpath(datadir,"exp_ps_m$(m)_opt_rho$oldrho.cgr");
-#ps0=init_state_file!(deepcopy(base),:ps,filename,showmeta=true)
-#(ps,simlist,commandlist)=
-#     run_sequence(ps0,
-#     "sq");
+filename=joinpath(datadir,"exp_ps_m$(m)_opt_rho$oldrho.cgr");
+ps0=init_state_file!(deepcopy(base),:ps,filename,showmeta=true)
+(ps,simlist,commandlist)=
+     run_sequence(ps0,
+     "sdddddddddddddddddSddSdddddSddSddSSGGGSdddddSSSddddSSSddSdSdgggggggggsSSssssGGGGGGGGGSSSkSSdggggggggSSddSgggggSSSSSSSGGGGSSSSSSSGGGGGSGGGGSSSssszsddSSSsSddSSdgggggggggggSsssssssGGGGGSSGGGGGGSNSSzdgggggggggSssGGGGGGGGGSSSzsn2q");
 
 filename=joinpath(datadir,"exp_sastre_m$(m)_opt_rho$oldrho.cgr");
 sastre0=init_state_file!(deepcopy(base),:sastre,filename,showmeta=true)
 (sastre,simlist,commandlist)=
      run_sequence(sastre0,
-                  "ddddddddddsdddddddddddssGGGssddddsdddddsdsssssdddssssddssssddsgggsssssGGGssq");
+                  "ddddddddddsdddddddddddssGGGssddddsdddddsdsssssdddssssddssssddsgggsssssGGGsszq");
 
 filename=joinpath(datadir,"exp_sid_m$(m)_opt_rho$oldrho.cgr");
 filename=joinpath(datadir,"exp_sid_m$(m).cgr");
 sid0=init_state_file!(deepcopy(base),:sid,filename,showmeta=true)
 (sid,simlist,commandlist)=
      run_sequence(sid_org,
-     "ddddsddddskssssGsssdddddddddssdddsssddsddssssddsddsddsssssGGssdddsdssssdgggggggggsdsssGGGsGGGGGGGgssdddggggggggssssssGGGGGGGGsssdddsddsddgggggggggsssssssGGGGGGGGGsssdddsddggggggssssGGGGGGssssssssddq")
+     "ddddsddddskssssGsssdddddddddssdddsssddsddssssddsddsddsssssGGssdddsdssssdgggggggggsdsssGGGsGGGGGGGgssdddggggggggssssssGGGGGGGGsssdddsddsddgggggggggsssssssGGGGGGGGGsssdddsddggggggssssGGGGGGsssssssszq")
 
 #filename=joinpath(datadir,"exp_bbc_m$(m)_opt_rho$oldrho.cgr");
 #bbc0=init_state_file!(deepcopy(base),:bbc,filename,showmeta=true)

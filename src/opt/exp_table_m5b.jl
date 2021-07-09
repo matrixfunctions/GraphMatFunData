@@ -48,32 +48,32 @@ mono_org=init_state_file!(deepcopy(base),:mono,filename,showmeta=true)
 filename=joinpath(datadir,"exp_mono_m$(m)_opt_rho$oldrho.cgr");
 mono0=init_state_file!(deepcopy(base),:mono,filename,showmeta=true)
 (mono,simlist,commandlist)=
-     run_sequence(mono0,"ssddddddssssssssddssdddsddsddssssssssssssssssddddssdsgggggggsssddssssssGGGssGGsssssGGsssssq");
+     run_sequence(mono0,"SddddddddddSSdddSsDDGGGSSdddSkSSzSSSsSddSggggggSSSSSSSSSSSSSGGGGGGSSSddSSSSkSKKKKKsssSzq")
 
 filename=joinpath(datadir,"exp_ps_m$(m)_opt_rho$oldrho.cgr");
 ps0=init_state_file!(deepcopy(base),:ps,filename,showmeta=true)
 (ps,simlist,commandlist)=
      run_sequence(ps0,
-     "sNsddddddddddddddsdddddsssddsssssq");
+     "sNsddddddddddddddsdddddSSzSkkSSSSSSSzdddSSGGGSSdddSdSggggggggkSSSGGGGGGGGSGSSzq");
 
 filename=joinpath(datadir,"exp_sastre_m$(m)_opt_rho$oldrho.cgr");
 sastre0=init_state_file!(deepcopy(base),:sastre,filename,showmeta=true)
 (sastre,simlist,commandlist)=
 run_sequence(sastre0,
-             "skssssssssssdddddsssddddsssssssdddssssssssddddssssdddssssssssssdddsssssssssdddsssssssssssddq");
+             "skssssssssssdddddsssddddsssssssdddssssssssddddssssdddssssssssssdddsssssssssdddssssssssssszq");
 #                  "skssssssssssdddddsssddddsssssssdddssssssssddddssssdddssssssssssdddsssssssssdddsssssssssssddssssssssssssssq");
 
 filename=joinpath(datadir,"exp_sid_m$(m)_opt_rho$oldrho.cgr");
 sid0=init_state_file!(deepcopy(base),:sid,filename,showmeta=true)
 (sid,simlist,commandlist)=
      run_sequence(sid0,
-     "sdddddsdddddssssssddddsssssssdddsdddsssssssssddddsddsssssNsssddsssssssssssssq")
+     "sdddddsdddddssssssddddsssssssdddsdddsssssssssddddsddsssssNsssddssssssssssssszq")
 
 filename=joinpath(datadir,"exp_bbc_m$(m)_opt_rho$oldrho.cgr");
 bbc0=init_state_file!(deepcopy(base),:bbc,filename,showmeta=true)
 (bbc,simlist,commandlist)=
      run_sequence(bbc0,
-     "sdddddsdddddssssssddddsssssssddddsssssssssssssdddssssssssssddddssssssssdsggggggsdssssssssssssssssGGGGGsssGGGsssq")
+     "sdddddsdddddssssssddddsssssssddddsssssssssssssdddssssssssssddddssssssssdsggggggsdssssssssssssssssGGGGGsssGGGssszq")
 
 
 include("exp_print_all.jl");

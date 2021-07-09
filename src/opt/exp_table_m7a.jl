@@ -45,10 +45,10 @@ mono_org=init_state_mult!(deepcopy(base),:mono,m,showmeta=true)
 
 
 (mono,simlist,commandlist)=
-     run_sequence(mono_org,"sssGGGssdddsssddssdddskKssddssdddddssssddddssdddsssddddssssdddssssssddsddsssddssddsdsgggggggdssssssGGGGGGGsssq");
+     run_sequence(mono_org,"sssGGGssdddsssddssdddskKssddssdddddssssddddssdddsssddddssssdddssssssddsddsssddssddsdsgggggggdssssssGGGGGGGssszq");
 
 (ps,simlist,commandlist)=
-     run_sequence(ps_org, "ksssGGGssdddddddddsddddddsdddddddddddsssddddddddddssgggggsssGGGssssGGsddsssddssddssskssddssddsssdddsssdddsggggggsssssssssssggsggssssssskssssgGGGGGGssssssssssssssGGGGGsssq");
+     run_sequence(ps_org, "ksssGGGssdddddddddsddddddsdddddddddddsssddddddddddssgggggsssGGGssssGGsddsssddssddssskssddssddsssdddsssdddsggggggsssssssssssggsggssssssskssssgGGGGGGssssssssssssssGGGGGssszq");
 
 
 filename=joinpath(datadir,"exp_sastre_m6_opt_rho2_7.cgr");
@@ -56,13 +56,14 @@ sastre0=init_state_file!(deepcopy(base),:sastre,filename,showmeta=true,
                             scale_and_square=true)
 (sastre,simlist,commandlist)=
      run_sequence(sastre0,
-                  "sdddddddddddddddddddddddddddddddddsdssGGGssddssq");
+                  "sdddddddddddddddddddddddddddddddddsdssGGGssddssSzq");
 
 
 sid0=init_state_mult!(deepcopy(base),:sid,m,showmeta=true)
 (sid,simlist,commandlist)=
      run_sequence(sid0,
-     "nssNdddddddddddddddddddssGGGsssddsddsddsddsddddsdddsddddddssssddsssssddgggggggggsssssssssGGGGGGGGsGsssq")
+     "ddddddSSSzkSSSSGGGSSSdddddSddSddSSddSddSSdddSdddSSSdddSddSzdddSdddSSSzSdddSSSNSddSdsSS2Sz2zq");
+# "ddddddSSSzkSSSSGGGSSSdddddSddSddSSddSddSSdddSdddSSSdddSddSzdddSdddSSSzSdddSSSNSddSds2SSSq");
 
 #(bbc,simlist,commandlist)=
 #     run_sequence(bbc_org,
