@@ -90,10 +90,22 @@ end
 struct ZeroNormalize
 end
 
-struct ShowTheta
+struct ShowInfo
     theta_guess;
 end
 
+struct LineSearch
+end
+
+struct SetSmallToZero
+    k
+end
+struct PurgeZeroOpt
+    k
+end
+
+struct DegoptNormalize
+end
 
 # Initialize State with a graph based on number of multiplications.
 function init_state_mult(f,rho,n,mult; eltype=Complex{BigFloat})
@@ -110,7 +122,7 @@ function init_state_mult(graphname,f,rho,n,mult; eltype=Complex{BigFloat})
     state.params[:rho]=rho;
     state.params[:target_n]=n;
 
-    state.discr=get_disc_discr(state);
+   state.discr=get_disc_discr(state);
 
 
     init_state_mult!(state,graphname,mult);
@@ -177,7 +189,12 @@ function init_state_mult!(state,graphname,mult;showmeta=false)
 end
 function init_state_file!(state,graphname,filename;showmeta=true,scale_and_square=false);
 
-    state.graph=import_compgraph(filename);
+    if (filename isa String)
+        state.graph=import_compgraph(filename);
+    else
+        state.graph=filename;
+    end
+
     mult=count(values(state.graph.operations) .==:mult);
     if (scale_and_square)
         mult += 1;
@@ -207,14 +224,24 @@ function initcommand(control,state)
         return OptSimulation(state;special_case=1);
     elseif (control == "2")
         return OptSimulation(state;special_case=2);
+    elseif (control == "3")
+        return OptSimulation(state;special_case=3);
+    elseif (control == "4")
+        return OptSimulation(state;special_case=4);
+    elseif (control == "5")
+        return OptSimulation(state;special_case=5);
     elseif (control == "l")
         return LMSimulation(state);
+    elseif (control == "L")
+        return LineSearch();
     elseif (control == "g")
         return ModifyParam(:γ0,0.8);
     elseif (control == "G")
         return ModifyParam(:γ0,1/0.8);
     elseif (control=="n")
         return ModifyParam(:n,1/2);
+    elseif (control=="Z")
+        return SetSmallToZero(1);
     elseif (control=="N")
         return ModifyParam(:n,2);
     elseif (control=="D")
@@ -227,10 +254,14 @@ function initcommand(control,state)
         return KickIt(state,1e-6);
     elseif (control=="z")
         return ZeroNormalize();
+    elseif (control=="p") # Purge crefs
+        return PurgeZeroOpt(1);
+    elseif (control=="0") #
+        return DegoptNormalize();
     elseif (control=="t")
-        return ShowTheta(Nothing);
+        return ShowInfo(Nothing);
     elseif (control=="T")
-        return ShowTheta(0.3);
+        return ShowInfo(0.3);
     else
         return NoOp();
     end
@@ -242,6 +273,7 @@ function runcommand(s::OptSimulation,state)
     f=state.f;
     graph=deepcopy(state.graph);
     discr=state.discr;
+    cref=deepcopy(s.cref);
     if (s.special_case == 1)
         discr=deepcopy(discr);
         push!(discr,zero(eltype(discr)));
@@ -252,12 +284,30 @@ function runcommand(s::OptSimulation,state)
         append!(discr,discr0/2);
         append!(discr,0.1*discr0/maximum(abs.(discr0)));
     end
+    if (s.special_case == 3)
+        discr=discr/2;
+    end
+    if (s.special_case == 4)
+        discr=discr/10;
+    end
+    if (s.special_case == 5)
+        c=state.params[:cref_count]
+        cref=[cref[mod(c,size(cref,1))+1]]
+        state.params[:cref_count] += 1;
+        println("count c:$c $(cref[1])");
+    end
 
-    cref=s.cref;
 
     opt_gauss_newton!(graph,f,discr;logger=1,
-                      stoptol=1e-30,cref=cref,
+                      stoptol=1e-40,cref=cref,
+                      errtype=:relerr,
                       s.kwargs...);
+
+    ff=f.(discr);
+    ftilde=eval_graph(graph,discr);
+    errv=abs.((ff-ftilde)./ftilde);
+
+
 
     state=deepcopy(state);
 
@@ -287,6 +337,90 @@ function runcommand(s::ModifyParam,state)
         state.discr=get_disc_discr(state);
     end
 
+    return state;
+end
+
+function runcommand(s::LineSearch,state)
+
+    graph0=deepcopy(state.graph);
+    smallest_err=Inf;
+    smallest_k=Inf;
+    smallest_graph=deepcopy(state.graph);
+    for (k,cref) in enumerate(state.cref)
+        cref=state.cref[1];
+        err0=showerr(state,output=false);
+
+
+        v0=get_coeffs(state.graph,[cref])[1];
+
+        vv=[v0];
+        append!(vv,v0*(1 .+ 10 .^(-20.0:2:-1)))
+        append!(vv,v0*(1 .- 10 .^(-20.0:2:-1)))
+        #vv=v0*(1 .+ [0;])
+        errv=zeros(typeof(err0),size(vv));
+        for (i,v) in enumerate(vv)
+            state.graph=deepcopy(graph0);
+            set_coeffs!(state.graph,v,[cref]);
+            errv[i]=showerr(state,output=false);
+        end
+        j=argmin(errv);
+        state.graph=deepcopy(graph0);
+        set_coeffs!(state.graph,vv[j],[cref]);
+        if (errv[j] <= smallest_err)
+            #@show errv
+            smallest_err=errv[j];
+            smallest_k=k;
+            smallest_graph=deepcopy(state.graph);
+        end
+    end
+    println("Modifying $(state.cref[smallest_k])");
+    state.graph=smallest_graph;
+    return state;
+
+end
+function runcommand(s::SetSmallToZero,state)
+    num_elements=s.k
+    state=deepcopy(state);
+    graph=deepcopy(state.graph);
+    #crefs=get_all_cref(graph);
+    crefs=deepcopy(state.cref);
+    vals=abs.(get_coeffs(graph,crefs));
+    J=sortperm(vals)
+    removed=Float64(norm(vals[J[1:num_elements]]));
+    println("zeroing: $(removed)");
+    set_coeffs!(graph,zero(vals[J[1:num_elements]]),
+                crefs[J[1:num_elements]]);
+    state.graph=graph;
+
+    vals=abs.(get_coeffs(graph,crefs));
+    J=findall(vals .== 0);
+
+    return state;
+end
+
+function runcommand(s::PurgeZeroOpt,state)
+
+    num_elements=s.k
+    state=deepcopy(state);
+    graph=deepcopy(state.graph);
+    #crefs=get_all_cref(graph);
+    crefs=deepcopy(state.cref);
+    vals=abs.(get_coeffs(graph,crefs));
+    J=findall(vals .== 0);
+    if (size(J,1)>0)
+        println("Purging cref $(crefs[J[1:s.k]])");
+        setdiff!(state.cref,crefs[J[1:s.k]]);
+    else
+        println("Found nothing to purge");
+    end
+    return state;
+end
+function runcommand(s::DegoptNormalize,state)
+    state=deepcopy(state);
+    degopt=Degopt(state.graph);
+    normalize!(degopt);
+    (g,_)=graph_degopt(degopt);
+    state.graph=g;
     return state;
 end
 
@@ -401,6 +535,11 @@ function runcommand(s::KickIt,state)
         #set_coeffs!(state.graph,crand[1:p],y_cref);
 
 
+    elseif (s.mode == 5)
+        crefs=state.cref;
+        vals=get_coeffs(state.graph,crefs);
+        vals=vals .+ 0.0001*fake_randn(random_state,size(vals,1));
+        set_coeffs!(state.graph,vals,crefs);
     else
 
         println("Unknown Kickit Mode");
@@ -423,7 +562,7 @@ function runcommand(s::ZeroNormalize,state)
     return state;
 end
 
-function runcommand(s::ShowTheta,state)
+function runcommand(s::ShowInfo,state)
 
     graph=state.graph;
     try
@@ -547,7 +686,137 @@ function fake_randn(f::FakeRandomState,s)
     #Random.seed!(f.k);
     data=Dict(1=> [0.20154471885274503],
               2=> [0.20154471885274503;1.0340551364982935],
-              3=> [0.20154471885274503;1.0340551364982935;-0.5035805877040641]);
+              3=> [0.20154471885274503;1.0340551364982935;-0.5035805877040641],
+              28=> [0.359629402423705
+ -0.06242791627632372
+ -1.399567921508011
+  0.4475847763985716
+ -0.8809915030490731
+ -0.2017627452986302
+ -0.5526516215876736
+ -0.35572577945591155
+ -0.1607797466665553
+  1.1475981747910613
+  1.5035230388445053
+  0.2812185565541045
+ -1.6580378604283104
+ -0.5724292571431209
+  0.11417065387535505
+ -0.1722032235811361
+  0.10954150466894817
+ -0.20957790746640031
+  0.9978114970316212
+ -0.33835189120333353
+  0.32711196563255096
+  1.3252610879493163
+ -0.6792960939508351
+ -0.3575966370924379
+  2.1577149397345545
+ -0.9170456413152324
+ -1.021037073006077
+                    -1.300754560220488],
+              70=>
+              [  0.359629402423705
+ -0.06242791627632372
+ -1.399567921508011
+  0.4475847763985716
+ -0.8809915030490731
+ -0.2017627452986302
+ -0.5526516215876736
+ -0.35572577945591155
+ -0.1607797466665553
+  1.1475981747910613
+  1.5035230388445053
+  0.2812185565541045
+ -1.6580378604283104
+ -0.5724292571431209
+  0.11417065387535505
+ -0.1722032235811361
+  0.10954150466894817
+ -0.20957790746640031
+  0.9978114970316212
+ -0.33835189120333353
+  0.32711196563255096
+  1.3252610879493163
+ -0.6792960939508351
+ -0.3575966370924379
+  1.8019224806064675
+ -0.1963681193189925
+ -0.3211451010184779
+  1.2571922200069134
+  1.7786053509127615
+  0.14664320175311135
+ -0.7581751321548498
+  0.04258439124049732
+  0.3352535968623635
+ -0.5458913912138869
+ -0.22338451264854198
+ -0.34276021437488724
+  0.3055002759810978
+ -1.7936388425860077
+ -1.3858822457781843
+  0.19432728408125308
+  0.9846027231525627
+  0.15797132251418744
+ -1.133614480683449
+ -1.4271913217697576
+  0.681897286305289
+ -0.5715336031075239
+ -0.4494921999102889
+  1.85227626772481
+ -0.7005686939516828
+  1.2121103292882787
+ -0.48418549713360953
+  1.2973921022483264
+  1.2098214008295365
+ -0.9687971894606597
+ -1.0648969106849027
+  0.935342888589825
+  0.8011405444777072
+  0.6074278447599545
+ -1.3830376414176226
+  0.7946559924063759
+ -0.9880332785507824
+ -1.4752050514434305
+ -0.5193534241313768
+  2.048090887179751
+  2.1577149397345545
+ -0.9170456413152324
+ -1.021037073006077
+ -1.300754560220488
+  0.10149275111695119
+                 -0.11990415249480861],
+              31 => [  0.359629402423705
+ -0.06242791627632372
+ -1.399567921508011
+  0.4475847763985716
+ -0.8809915030490731
+ -0.2017627452986302
+ -0.5526516215876736
+ -0.35572577945591155
+ -0.1607797466665553
+  1.1475981747910613
+  1.5035230388445053
+  0.2812185565541045
+ -1.6580378604283104
+ -0.5724292571431209
+  0.11417065387535505
+ -0.1722032235811361
+  0.10954150466894817
+ -0.20957790746640031
+  0.9978114970316212
+ -0.33835189120333353
+  0.32711196563255096
+  1.3252610879493163
+ -0.6792960939508351
+ -0.3575966370924379
+  2.1577149397345545
+ -0.9170456413152324
+ -1.021037073006077
+ -1.300754560220488
+  0.10149275111695119
+ -0.11990415249480861
+  0.7959522954870297]);
 
     #x=randn(s);
     #writedlm("/tmp/random_$(f.k)_$s.csv",x);
