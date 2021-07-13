@@ -3,20 +3,20 @@ using GraphMatFun
 mv=1:11
 data_dir=joinpath("..","data");
 references=Dict{Symbol,String}();
-references[:sid]="Boosting the computation of the matrix exponential, J. Sastre, J. Ibáñez, E. Defez, Appl. Math.  Computation, 340, 2019, 206-220";
-references[:sastre]="Efficient evaluation of matrix polynomials, J. Sastre. Linear Algebra and its Applications ,Volume 539, 2018, Pages 229-250, https://doi.org/10.1016/j.laa.2017.11.010";
-references[:bbc]="Computing the matrix exponential with an optimized Taylor polynomial approximation, P. Bader, S.  Blanes, and F. Casas, Mathematics, 7(12), 2019";
-references[:bbcs]="An efficient algorithm to compute the exponential of skew-Hermitian matrices for the time integration of the Schrödinger equation, P. Bader, S. Blanes, F. Casas, M. Seydaoglu";
+references[:exp_sid]="Boosting the computation of the matrix exponential, J. Sastre, J. Ibáñez, E. Defez, Appl. Math.  Computation, 340, 2019, 206-220";
+references[:exp_sastre]="Efficient evaluation of matrix polynomials, J. Sastre. Linear Algebra and its Applications ,Volume 539, 2018, Pages 229-250, https://doi.org/10.1016/j.laa.2017.11.010";
+references[:exp_bbc]="Computing the matrix exponential with an optimized Taylor polynomial approximation, P. Bader, S.  Blanes, and F. Casas, Mathematics, 7(12), 2019";
+references[:exp_bbcs]="An efficient algorithm to compute the exponential of skew-Hermitian matrices for the time integration of the Schrödinger equation, P. Bader, S. Blanes, F. Casas, M. Seydaoglu";
 references[:exp_ps]="evaluation of Taylor series using On the number of nonscalar multiplications necessary to evaluate polynomials, M. Paterson, L.   Stockmeyer, SIAM J. Comput., 2(1), 1973";
 references[:exp_mono]="monomial Taylor series evaluation of exponential";
 references[:exp_native_jl]="converted Julia 1.7 implementation of Scaling and squaring https://github.com/JuliaLang/julia/blob/697e782ab86bfcdd7fd15550241fe162c51d9f98/stdlib/LinearAlgebra/src/dense.jl#L554 which is based on N. J. Higham. The Scaling and Squaring Method for the Matrix Exponential Revisited. SIAM J. Matrix Anal. Appl., 2005 26:4, 1179-1193"
 methods=keys(references);
 
 funs=Dict{Symbol,String}();
-funs[:sid]="exp";
-funs[:sastre]="exp";
-funs[:bbc]="exp";
-funs[:bbcs]="exp";
+funs[:exp_sid]="exp";
+funs[:exp_sastre]="exp";
+funs[:exp_bbc]="exp";
+funs[:exp_bbcs]="exp";
 funs[:exp_ps]="exp";
 funs[:exp_mono]="exp";
 funs[:exp_native_jl]="exp";
@@ -25,24 +25,25 @@ funs[:exp_native_jl]="exp";
 for m in mv
     println("m=$m");
     for method in methods
+        global rho, n;
         reftext=references[method]
         multstr="with m=$m multiplications";
-        fname="$(method)_m$m.cgr";
         fun=funs[method];
+        fname="$(method)_m$m.cgr";
         try
             extra_text="";
-            dom=""; # Domain
-            if (method == :sid)
+            dom="Unknown"; # Domain in general unknown
+            if (method == :exp_sid)
                 (graph,_)=graph_sid_exp(m);
-            elseif (method == :sastre)
-                (graph,_)=graph_sastre_basic_exp(m);
-            elseif (method == :bbc)
+            elseif (method == :exp_sastre)
+                (graph,_)=graph_sastre_exp(m);
+            elseif (method == :exp_bbc)
                 if (m==6)
                     println("Skipping $method m=6");
                     continue;
                 end
-                (graph,_)=graph_bbc_basic_exp(m);
-            elseif (method == :bbcs)
+                (graph,_)=graph_bbc_exp(m);
+            elseif (method == :exp_bbcs)
                 (graph,_)=graph_bbcs_cheb_exp(m);
             elseif (method == :exp_ps)
                 # Automatically determine degree
@@ -94,11 +95,11 @@ for m in mv
             end
             # Note: The graph compression is done in the code generation
             # phase.
-            descr="Reference implementation of $reftext $multstr$extra_text"
+            descr="Reference implementation of $reftext $multstr$(extra_text). Run compress_graph! before generating code from this graph."
             export_compgraph(graph,joinpath(data_dir,fun,fname),
                              descr=descr,user="Elias Jarlebring",
                              dom=dom,
-                             genby="GraphMatFunData/src/ref/generate_ref.jl");
+                             genby="GraphMatFunData/src/generate_ref.jl");
         catch (e)
             if (typeof(e) != ErrorException)
                 rethrow(e);
