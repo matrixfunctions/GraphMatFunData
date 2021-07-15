@@ -64,7 +64,7 @@ end
 
 % Compute exponential
 % Get scaling and Pade parameters.
-[s, m, Tpowers] = expm_params(T);
+[s, m, Tpowers, tpowers_mults] = expm_params(T);
 
 % Rescale the powers of T appropriately.
 if s ~= 0
@@ -76,13 +76,15 @@ end
 s
 m
 Tpowers
-
+tpowers_mults
 % Evaluate the Pade approximant.
-F = pade_approx(T, Tpowers, m);
+[F,pade_mults] = pade_approx(T, Tpowers, m);
+pade_mults
 if recomputeDiags
     F = recompute_block_diag(T, F, blockformat);
 end
 
+square_mults=s
 % Squaring phase.
 for k = 1:s
     F = F*F;
@@ -94,7 +96,7 @@ end
 end
 
 % Subfunctions
-function F = pade_approx(T, Tpowers, m)
+function [F,mults] = pade_approx(T, Tpowers, m)
 %pade_approx Computes the Pade approximant to exp(T) of order [m/m].
 c = get_pade_coefficients(m);
 n = length(T);
@@ -116,7 +118,6 @@ switch m
         end
         U = T*U;
         mults=mults+1;
-        mults
     case 13
         U = T * (Tpowers{6}*(c(14)*Tpowers{6} + c(12)*Tpowers{4} + ...
             c(10)*Tpowers{2}) + c(8)*Tpowers{6} + c(6)*Tpowers{4} + ...
@@ -126,7 +127,6 @@ switch m
             c(3)*Tpowers{2} + c(1)*I;
 
         mults=mults+3;
-        mults
 end
 warns = warning('off','MATLAB:nearlySingularMatrix');
 try
@@ -219,7 +219,7 @@ alpha = normAm(scaledT,2*m_val+1)/norm(T,1);
 t = max(ceil(log2(2*alpha/eps(class(alpha)))/(2*m_val)),0);
 end
 
-function [s, m, Tpowers] = expm_params(T)
+function [s, m, Tpowers, mults] = expm_params(T)
 %expm_params Obtain scaling parameter and order of the Pade approximant.
 % Coefficients of backwards error function.
 coeff = [1/100800, 1/10059033600, 1/4487938430976000,...
@@ -242,12 +242,13 @@ theta = [%3.650024139523051e-008
     %4.458935413036850e+000
     5.371920351148152e+000];% m_vals = 13
 
+mults=0;
 Tpowers{2} = T*T;
-"mul"
+mults=mults+1;
 Tpowers{4} = Tpowers{2}*Tpowers{2};
-"mul"
+mults=mults+1;
 Tpowers{6} = Tpowers{2}*Tpowers{4};
-"mul"
+mults=mults+1;
 d4 = norm(Tpowers{4},1)^(1/4);
 d6 = norm(Tpowers{6},1)^(1/6);
 eta1 = max(d4, d6);

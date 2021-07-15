@@ -16,7 +16,7 @@ end
 
 # Process code from template.
 # Used for C, julia, and matlab.
-function gen_main(fname,N,col,graphs,names,mkl,commentsign="#",skip=[:expm_matlab,:expmpoly_matlab])
+function gen_main(fname,N,graphs,names,normvalues,mkl,commentsign="#",skip=[:expm_matlab,:expmpoly_matlab])
 
     # Common preprocessing:
     # * include files with generated code (C only);
@@ -27,7 +27,6 @@ function gen_main(fname,N,col,graphs,names,mkl,commentsign="#",skip=[:expm_matla
     end_repeated_line=0;
     for (i,line)=enumerate(lines)
         line=replace(line, "LOC_INC" => gen_c_include(names,mkl,skip)); # C only
-        line=replace(line, "COLUMN" => string(col));       # Julia/Matlab only
         line=replace(line, "MATSIZE" => string(N));
         if (mkl)
             line=replace(line, "USING" => "using MKL;");          # Julia only
@@ -62,6 +61,7 @@ function gen_main(fname,N,col,graphs,names,mkl,commentsign="#",skip=[:expm_matla
                     line=replace(line,"INCLUDE" => "exp_julia=exp");
                 end
 
+                line=replace(line, "MATNORM" => string(normvalues[i]));  # Set the norm
                 line=replace(line,"NAME" => n);
                 line=replace(line,"FUNCTION" => n);
 
@@ -114,7 +114,7 @@ end
 # Generate C code.
 println("Generating C/MKL");
 c_template="src/cputime/c_main_template.c";
-lines=gen_main(c_template,2000,1,graphs,names,true,"//",
+lines=gen_main(c_template,2000,graphs,names,normvalues,true,"//",
                [:exp_julia,:expm_matlab,:expmpoly_matlab]);
 open(string(tempdir(),"/run_cputime_c_MKL.c"),"w") do io
     for line=lines
@@ -122,7 +122,7 @@ open(string(tempdir(),"/run_cputime_c_MKL.c"),"w") do io
     end
 end
 println("Generating C/OpenBLAS");
-lines=gen_main(c_template,2000,1,graphs,names,false,"//",
+lines=gen_main(c_template,2000,graphs,names,normvalues,false,"//",
                [:exp_julia,:expm_matlab,:expmpoly_matlab]);
 open(string(tempdir(),"/run_cputime_c_OpenBLAS.c"),"w") do io
     for line=lines
@@ -134,14 +134,14 @@ end
 # Generate Julia code.
 println("Generating julia/MKL");
 julia_template="src/cputime/julia_main_template.jl";
-lines=gen_main(julia_template,2000,1,graphs,names,true);
+lines=gen_main(julia_template,2000,graphs,names,normvalues,true);
 open(string(tempdir(),"/run_cputime_julia_MKL.jl"),"w") do io
     for line=lines
         write(io,line,"\n");
     end
 end
 println("Generating julia/OpenBLAS");
-lines=gen_main(julia_template,2000,1,graphs,names,false);
+lines=gen_main(julia_template,2000,graphs,names,normvalues,false);
 open(string(tempdir(),"/run_cputime_julia_OpenBLAS.jl"),"w") do io
     for line=lines
         write(io,line,"\n");
@@ -150,7 +150,7 @@ end
 
 # Generate MATLAB code.
 println("Generating matlab/MKL");
-lines=gen_main("src/cputime/matlab_main_template.m",2000,1,graphs,names,false,"%",[:exp_julia]);
+lines=gen_main("src/cputime/matlab_main_template.m",2000,graphs,names,normvalues,false,"%",[:exp_julia]);
 open(string(tempdir(),"/run_cputime_matlab_OpenBLAS.m"),"w") do io
     for line=lines
         write(io,line,"\n");

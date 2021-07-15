@@ -30,11 +30,10 @@ generate: create_dir
 	# requires running
 	#     source /opt/intel/oneapi/setvars.sh
 	# from the parent shell.
-	gcc -Wall -lm -o $(TEMPDIR)/run_cputime_c_MKL \
-		$(TEMPDIR)/run_cputime_c_MKL.c -lmkl_rt
-	gcc -Wall -lm  -o $(TEMPDIR)/run_cputime_c_OpenBLAS \
-		$(TEMPDIR)/run_cputime_c_OpenBLAS.c -lblas -llapacke
-
+	gcc -Wall -o $(TEMPDIR)/run_cputime_c_MKL \
+		$(TEMPDIR)/run_cputime_c_MKL.c -lmkl_rt -lm
+	gcc -Wall -o $(TEMPDIR)/run_cputime_c_OpenBLAS \
+		$(TEMPDIR)/run_cputime_c_OpenBLAS.c -lblas -llapacke -lm
 
 
 
@@ -42,7 +41,7 @@ generate: create_dir
 runall: run_c run_julia run_matlab
 
 run_c:
-	if [ `cat /sys/devices/system/cpu/intel_pstate/no_turbo`!="1" ]; then \
+	if [ `cat /sys/devices/system/cpu/intel_pstate/no_turbo` != 1 ]; then \
 		echo "Warning: CPU-time boosting seems to be enabled."; \
 		echo "Disable on ubuntu: https://askubuntu.com/a/620114"; \
 	fi

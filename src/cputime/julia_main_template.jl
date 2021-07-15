@@ -32,17 +32,20 @@ else
 end
 
 
-col=COLUMN;
 
 
 n=MATSIZE;
-A0=triu(tril(ones(n,n),3),-3)*1.0 +1.0*I;
-A0[5,3] += 0.0001; # Break symmetry to avoid special case code
-if col==1
-    A0=2.5*A0/opnorm(A0,1)
-else
-    A0=5.5*A0/opnorm(A0,1);
+A0=zeros(n,n);
+for i=1:n
+    for j=1:n
+        if (i!=j)
+            A0[i,j]=1/sqrt(abs(i-j));
+        end
+    end
 end
+A0[n,1] += 0.0001;
+# opnorm(A0,1)=123.57039475388511
+A0_basic=A0/opnorm(A0,1);
 
 println("Matrix norm: $(opnorm(A0,1))");
 println("Matrix size: ", n ," x ", n);
@@ -59,7 +62,7 @@ end
 ### START REPEATED CODE
 # Code to run: NAME *******
 print(@sprintf("%20.20s: ","NAME"));
-A=deepcopy(A0);
+A=MATNORM*A0_basic;
 INCLUDE
 bb=@benchmark FUNCTION($A) samples=5 seconds=20;
 mm=median(bb.times)*1e-9;

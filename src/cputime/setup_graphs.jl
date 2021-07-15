@@ -3,10 +3,8 @@ using LinearAlgebra;
 
 
 datadir=joinpath("data","exp");
-graph_m6=import_compgraph(joinpath(datadir,"exp_mono_m6_opt_rho2_7.cgr"));
 graph_m6_SID=import_compgraph(joinpath(datadir,"exp_sid_m6_opt_rho2_22.cgr"));
-graph_m7=import_compgraph(joinpath(datadir,"exp_mono_m7_opt_rho6_4.cgr"));
-graph_m7_SID=import_compgraph(joinpath(datadir,"exp_sid_m7_opt_rho3_59.cgr"));
+graph_m7_mono=import_compgraph(joinpath(datadir,"exp_mono_m7_opt_rho6_4.cgr"));
 graph_m8_mono=import_compgraph(joinpath(datadir,"exp_mono_m8_opt_rho13_5.cgr"));
 
 
@@ -16,8 +14,26 @@ AA=ones(Float64,1,1)
 (graph_native2,_)=graph_exp_native_jl(AA*5.5);
 (graph_native3,_)=graph_exp_native_jl(AA*13.5);
 
-names=["expm_matlab", "exp_julia", "expmpoly_matlab", "m6_mono_taylor_2_7","m6_SID_2_22","m7_mono_taylor_6_0", "m7_SID_3_59","native_73_jl","native_83_jl","m8_mono_13_5","native_93_jl"];
-graphs=[:expm_matlab,:exp_julia,:expmpoly_matlab,graph_m6,graph_m6_SID,graph_m7,graph_m7_SID,graph_native,graph_native2,graph_m8_mono,graph_native3]
+
+runs=["expm_matlab"             :expm_matlab        2.5
+      "expm_matlab"             :expm_matlab        6.0
+      "expm_matlab"             :expm_matlab        13.5
+      "exp_julia"               :exp_julia          2.5
+      "exp_julia"               :exp_julia          6.0
+      "exp_julia"               :exp_julia          13.5
+      "expmpoly_matlab"         :expmpoly_matlab    2.5
+      "expmpoly_matlab"         :expmpoly_matlab    6.0
+      "expmpoly_matlab"         :expmpoly_matlab    13.5
+      "sid_m6_opt_rho2_7"       graph_m6_SID        2.5
+      "mono_m7_opt_rho6_4"      graph_m7_mono       6.0
+      "mono_m8_opt_rho13_5"     graph_m8_mono       2.5
+      "native_73_jl"            graph_native        2.5
+      "native_83_jl"            graph_native2       6.0
+      "native_93_jl"            graph_native3       13.5];
+
+names=runs[:,1];
+graphs=runs[:,2];
+normvalues=runs[:,3];
 for (i,g)=enumerate(graphs)
     if (g isa Compgraph)
         if (count(values(g.operations) .== :ldiv) == 0)
