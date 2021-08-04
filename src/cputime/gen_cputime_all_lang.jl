@@ -111,10 +111,12 @@ for (i,g)=enumerate(graphs)
     println();
 end
 
+
+n=4000
 # Generate C code.
 println("Generating C/MKL");
 c_template="src/cputime/c_main_template.c";
-lines=gen_main(c_template,2000,graphs,names,normvalues,true,"//",
+lines=gen_main(c_template,n,graphs,names,normvalues,true,"//",
                [:exp_julia,:expm_matlab,:expmpoly_matlab]);
 open(string(tempdir(),"/run_cputime_c_MKL.c"),"w") do io
     for line=lines
@@ -122,7 +124,7 @@ open(string(tempdir(),"/run_cputime_c_MKL.c"),"w") do io
     end
 end
 println("Generating C/OpenBLAS");
-lines=gen_main(c_template,2000,graphs,names,normvalues,false,"//",
+lines=gen_main(c_template,n,graphs,names,normvalues,false,"//",
                [:exp_julia,:expm_matlab,:expmpoly_matlab]);
 open(string(tempdir(),"/run_cputime_c_OpenBLAS.c"),"w") do io
     for line=lines
@@ -134,14 +136,14 @@ end
 # Generate Julia code.
 println("Generating julia/MKL");
 julia_template="src/cputime/julia_main_template.jl";
-lines=gen_main(julia_template,2000,graphs,names,normvalues,true);
+lines=gen_main(julia_template,n,graphs,names,normvalues,true);
 open(string(tempdir(),"/run_cputime_julia_MKL.jl"),"w") do io
     for line=lines
         write(io,line,"\n");
     end
 end
 println("Generating julia/OpenBLAS");
-lines=gen_main(julia_template,2000,graphs,names,normvalues,false);
+lines=gen_main(julia_template,n,graphs,names,normvalues,false);
 open(string(tempdir(),"/run_cputime_julia_OpenBLAS.jl"),"w") do io
     for line=lines
         write(io,line,"\n");
@@ -150,7 +152,7 @@ end
 
 # Generate MATLAB code.
 println("Generating matlab/MKL");
-lines=gen_main("src/cputime/matlab_main_template.m",2000,graphs,names,normvalues,false,"%",[:exp_julia]);
+lines=gen_main("src/cputime/matlab_main_template.m",n,graphs,names,normvalues,false,"%",[:exp_julia]);
 open(string(tempdir(),"/run_cputime_matlab_OpenBLAS.m"),"w") do io
     for line=lines
         write(io,line,"\n");
