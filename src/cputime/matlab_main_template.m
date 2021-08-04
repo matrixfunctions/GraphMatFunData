@@ -9,7 +9,7 @@ for i=1:n
 end
 A0(n,1) = A0(n,1) + 0.0001; % Break symmetry to avoid special case code
 A0_basic=A0/norm(A0);
-
+clear A0;
 
 fprintf("System: %s  Computer: %s\n",version,computer);
 addpath('/tmp');
@@ -21,7 +21,7 @@ nof_samples=10; tv=zeros(nof_samples,1);
 
 % Convenience functions
 expm_matlab=@(x) expm(x);
-expmpoly_matlab=@(x) expmpol(x);
+expmpoly_matlab=@(x) expmpol_wrapper(x); % To get the parameters right
 
 if (~(exist("expmpol")>0))
     fprintf("Function expmpol() not in PATH. Trying to download from\n");
@@ -42,12 +42,13 @@ end
 %%% START REPEATED CODE
 % Code to run: NAME *******
 fprintf("%20.20s: ","NAME");
-A=MATNORM*A0_basic;
 
 for k=1:nof_samples
+    A=MATNORM*A0_basic;
     tic;
     NAME(A);
     tv(k)=toc;
+    clear A;
     pause(0.5);
 end
 fprintf("%.6f ± %.3f\n",median(tv),std(tv));
