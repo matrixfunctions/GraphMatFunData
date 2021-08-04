@@ -26,7 +26,7 @@ generate: create_dir
 		julia src/cputime/gen_cputime_all_lang.jl  &> \
 		$(TEMPDIR)/gen_all_lang.jl.output
 	# For the parameters in the expmpol
-	cp src/cputime/expmpol_wrapper.m $(TEMPDIR)
+	cp expmpol_wrapper.m $(TEMPDIR)
 	echo "Compiling generated C code..."
 	# For MKL as part of Intel OneAPI, setting the environment correctly
 	# requires running
