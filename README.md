@@ -12,14 +12,14 @@ You can use the generated files to efficiently compute the matrix exponential.
 
 ```julia
 julia> using GraphMatFun, BenchmarkTools, LinearAlgebra;
-julia> A=randn(1000,1000); A=A/norm(A);
-julia> E1=@btime exp($A);
-  1.253 s (21 allocations: 68.68 MiB)
 julia> include("/home/jarl/jobb/src/GraphMatFunData/data/generated/exp/exp_sid_m5_opt_rho1_9.jl");
+julia> A=randn(1000,1000); A=1.8*A/norm(A);
+julia> E1=@btime exp($A);
+  1.111 s (23 allocations: 76.31 MiB)
 julia> E2=@btime exp_sid_m5_opt_rho1_9($A);
-  308.744 ms (19 allocations: 68.67 MiB)
+  332.667 ms (19 allocations: 68.67 MiB)
 julia> norm(E1-E2)/norm(E2)
-3.221131144494063e-16
+3.1592474046054336e-16
 ```
 
 ### Matlab
