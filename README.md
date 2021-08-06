@@ -12,7 +12,8 @@ You can use the generated files to efficiently compute the matrix exponential.
 
 ```julia
 julia> using GraphMatFun, BenchmarkTools, LinearAlgebra;
-julia> include("/home/jarl/jobb/src/GraphMatFunData/data/generated/exp/exp_sid_m5_opt_rho1_9.jl");
+julia> # Download from https://github.com/matrixfunctions/GraphMatFunData/tree/main/data/generated/exp
+julia> include("exp_sid_m5_opt_rho1_9.jl");
 julia> A=randn(1000,1000); A=1.8*A/norm(A);
 julia> E1=@btime exp($A);
   1.111 s (23 allocations: 76.31 MiB)
@@ -27,9 +28,7 @@ julia> norm(E1-E2)/norm(E2)
 The following illustrates that the fixed topology optimization improves the error. 
 
 ```matlab
->> pwd
-ans =
-    '/home/jarl/jobb_synced/src/GraphMatFunData/data/generated/exp'
+>> % Download exp_sid_m5.m and exp_sid_m5_opt_rho1_9.m from https://github.com/matrixfunctions/GraphMatFunData/tree/main/data/generated/exp
 >> xv=0:0.01:3;
 >> err1=zeros(size(xv)); for j=1:length(xv); err1(j)=exp_sid_m5(xv(j))-exp(xv(j)); end
 >> err2=zeros(size(xv)); for j=1:length(xv); err2(j)=exp_sid_m5_opt_rho1_9(xv(j))-exp(xv(j)); end
