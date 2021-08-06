@@ -1,7 +1,6 @@
 # GraphMatFunData
-Data files and scripts for GraphMatFun.jl 
 
-This file contains data files for the julia package [`GraphMatFun.jl`](https://github.com/matrixfunctions/GraphMatFun.jl) in particular the data files for the experiments in the manuscript [Computation graph for matrix fucntions](https://arxiv.org/abs/2107.12198)
+This repository contains data files for the julia package [`GraphMatFun.jl`](https://github.com/matrixfunctions/GraphMatFun.jl) in particular the data files for the experiments in the manuscript [Computation graph for matrix fucntions](https://arxiv.org/abs/2107.12198).
 
 ## Examples:
 
