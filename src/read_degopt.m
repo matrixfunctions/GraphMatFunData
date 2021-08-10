@@ -113,10 +113,9 @@ function degopt=read_degopt(fname,use_vpa)
     end
     fclose(fid);
 
-    Ha=Ha(1:maxrow,1:maxrow+1)
-    Hb=Hb(1:maxrow,1:maxrow+1)
+    Ha=Ha(1:maxrow,1:maxrow+1);
+    Hb=Hb(1:maxrow,1:maxrow+1);
     y(maxrow+2)=y(maxrow+3);
     y=y(1:maxrow+2);
-
     degopt=struct('Ha',Ha,'Hb',Hb,'y',y);
 end
