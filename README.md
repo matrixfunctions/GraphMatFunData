@@ -50,4 +50,4 @@ Produces:
 * `data/generated`: The code generated (in matlab, julia and C-format) for all the filies in `data/exp` and `data/sqrt_plus_one`
 * `src/opt`: The design by optimization of the exponential and square root. Can generate files in `data/`
 * `src/cputimg`: The cpu-timing for the expontial. Reads the data files from `data/`
-* `src/matlab`: Loading and evaluation of degree optimal polynomials
+* `src/matlab`: Loading and evaluation of degree optimal polynomials in matlab
