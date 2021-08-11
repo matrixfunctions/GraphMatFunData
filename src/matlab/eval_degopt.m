@@ -1,8 +1,9 @@
 function F=eval_degopt(degopt,A)
+% Eval a graph on degopt format loaded with read_degopt.m
 Ha=degopt.Ha;
 Hb=degopt.Hb;
 y=degopt.y;
-m=size(Ha,1)
+m=size(Ha,1);
 
 use_vpa= ~isnumeric(Ha(1,1));
 

@@ -1,5 +1,8 @@
-degopt1=read_degopt('/home/jarl/jobb/src/GraphMatFunData/data/exp/exp_sastre_m4.cgr',true);
-degopt2=read_degopt('/home/jarl/jobb/src/GraphMatFunData/data/exp/exp_sastre_m4_opt_rho0_69.cgr',true);
+% Generates the figure 5. in the manuscript https://arxiv.org/abs/2107.12198
+
+% Download from https://github.com/matrixfunctions/GraphMatFunData/tree/main/data/exp
+degopt1=read_degopt('exp_sastre_m4.cgr',true);
+degopt2=read_degopt('exp_sastre_m4_opt_rho0_69.cgr',true);
 
 xv=0:0.05:1.0;
 xv(1) = xv(2)/10;
