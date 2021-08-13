@@ -1,4 +1,4 @@
-using GenericSVD, DelimitedFiles,Random
+using GenericLinearAlgebra, DelimitedFiles,Random
 # State of the
 mutable struct State
     f   # function
@@ -300,7 +300,6 @@ function runcommand(s::OptSimulation,state)
 
     opt_gauss_newton!(graph,f,discr;logger=1,
                       stoptol=1e-40,cref=cref,
-                      errtype=:relerr,
                       s.kwargs...);
 
     ff=f.(discr);
