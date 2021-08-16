@@ -15,50 +15,58 @@ function matfun_axpby!(X,a,b,Y::UniformScaling)
 end
 
 @inline function exp_ps_m8_opt_rho13_5(A)
-    return exp_ps_m8_opt_rho13_5!(copy(A))
+    T=promote_type(eltype(A),Float64)
+    A_copy=similar(A,T); A_copy .= A;
+    return exp_ps_m8_opt_rho13_5!(A_copy)
 end
 
 @inline function exp_ps_m8_opt_rho13_5!(A)
     T=promote_type(eltype(A),Float64) # Make it work for many 'bigger' types (matrices and scalars)
-    max_memslots=10
-    memslots=Vector{Matrix{T}}(undef,max_memslots)
+    # max_memslots=10
     n=size(A,1)
-    for j=1:max_memslots
-        memslots[j]=Matrix{T}(undef,n,n)
-    end
     # The first slots are precomputed nodes [:A]
-    memslots[1]=A # overwrite A
+    memslots2 = similar(A,T)
+    memslots3 = similar(A,T)
+    memslots4 = similar(A,T)
+    memslots5 = similar(A,T)
+    memslots6 = similar(A,T)
+    memslots7 = similar(A,T)
+    memslots8 = similar(A,T)
+    memslots9 = similar(A,T)
+    memslots10 = similar(A,T)
+    # Assign precomputed nodes memslots 
+    memslots1=A # overwrite A
     # Uniform scaling is exploited.
     # No matrix I explicitly allocated.
     # Computation order: Bb2 Ba2 B2 Ba3 Bb3 B3 Ba4 Bb4 B4 Ba5 Bb5 B5 Ba6 Bb6 B6 Ba7 Bb7 B7 Ba8 Bb8 B8 Ba9 Bb9 B9 T2k11
     # Computing Bb2 = x*I+x*A
     coeff1=0.42031771622120523
     coeff2=0.154626052690562
-    memslots[2] .= coeff2.*memslots[1]
-    mul!(memslots[2],true,I*coeff1,true,true)
+    memslots2 .= coeff2.*memslots1
+    mul!(memslots2,true,I*coeff1,true,true)
     # Computing Ba2 = x*I+x*A
     coeff1=0.42031771622120523
     coeff2=0.154626052690562
-    memslots[3] .= coeff2.*memslots[1]
-    mul!(memslots[3],true,I*coeff1,true,true)
+    memslots3 .= coeff2.*memslots1
+    mul!(memslots3,true,I*coeff1,true,true)
     # Computing B2 with operation: mult
-    mul!(memslots[4],memslots[3],memslots[2])
+    mul!(memslots4,memslots3,memslots2)
     # Deallocating Ba2 in slot 3
     # Deallocating Bb2 in slot 2
     # Computing Ba3 = x*I+x*A+x*B2
     coeff1=0.09654809779701808
     coeff2=0.4657361097626277
     coeff3=0.19731022777550086
-    memslots[2] .= coeff2.*memslots[1] .+ coeff3.*memslots[4]
-    mul!(memslots[2],true,I*coeff1,true,true)
+    memslots2 .= coeff2.*memslots1 .+ coeff3.*memslots4
+    mul!(memslots2,true,I*coeff1,true,true)
     # Computing Bb3 = x*I+x*A+x*B2
     coeff1=0.9062397883450928
     coeff2=0.05669626301307128
     coeff3=0.12302744324936216
-    memslots[3] .= coeff2.*memslots[1] .+ coeff3.*memslots[4]
-    mul!(memslots[3],true,I*coeff1,true,true)
+    memslots3 .= coeff2.*memslots1 .+ coeff3.*memslots4
+    mul!(memslots3,true,I*coeff1,true,true)
     # Computing B3 with operation: mult
-    mul!(memslots[5],memslots[2],memslots[3])
+    mul!(memslots5,memslots2,memslots3)
     # Deallocating Ba3 in slot 2
     # Deallocating Bb3 in slot 3
     # Computing Ba4 = x*I+x*A+x*B2+x*B3
@@ -66,17 +74,17 @@ end
     coeff2=0.06738540542304026
     coeff3=0.7329752440067754
     coeff4=0.5453304515439815
-    memslots[2] .= coeff2.*memslots[1] .+ coeff3.*memslots[4] .+ coeff4.*memslots[5]
-    mul!(memslots[2],true,I*coeff1,true,true)
+    memslots2 .= coeff2.*memslots1 .+ coeff3.*memslots4 .+ coeff4.*memslots5
+    mul!(memslots2,true,I*coeff1,true,true)
     # Computing Bb4 = x*I+x*A+x*B2+x*B3
     coeff1=0.7648819021317048
     coeff2=0.15551270544310056
     coeff3=0.13872927228389606
     coeff4=0.031072070853003377
-    memslots[3] .= coeff2.*memslots[1] .+ coeff3.*memslots[4] .+ coeff4.*memslots[5]
-    mul!(memslots[3],true,I*coeff1,true,true)
+    memslots3 .= coeff2.*memslots1 .+ coeff3.*memslots4 .+ coeff4.*memslots5
+    mul!(memslots3,true,I*coeff1,true,true)
     # Computing B4 with operation: mult
-    mul!(memslots[6],memslots[2],memslots[3])
+    mul!(memslots6,memslots2,memslots3)
     # Deallocating Ba4 in slot 2
     # Deallocating Bb4 in slot 3
     # Computing Ba5 = x*I+x*A+x*B2+x*B3+x*B4
@@ -85,18 +93,18 @@ end
     coeff3=0.16951280499357504
     coeff4=0.7173684223758208
     coeff5=0.6151562256858113
-    memslots[2] .= coeff2.*memslots[1] .+ coeff3.*memslots[4] .+ coeff4.*memslots[5] .+ coeff5.*memslots[6]
-    mul!(memslots[2],true,I*coeff1,true,true)
+    memslots2 .= coeff2.*memslots1 .+ coeff3.*memslots4 .+ coeff4.*memslots5 .+ coeff5.*memslots6
+    mul!(memslots2,true,I*coeff1,true,true)
     # Computing Bb5 = x*I+x*A+x*B2+x*B3+x*B4
     coeff1=0.4984122280039027
     coeff2=0.3084467039511569
     coeff3=0.32464232547450916
     coeff4=0.11022586483948126
     coeff5=0.00562561032811143
-    memslots[3] .= coeff2.*memslots[1] .+ coeff3.*memslots[4] .+ coeff4.*memslots[5] .+ coeff5.*memslots[6]
-    mul!(memslots[3],true,I*coeff1,true,true)
+    memslots3 .= coeff2.*memslots1 .+ coeff3.*memslots4 .+ coeff4.*memslots5 .+ coeff5.*memslots6
+    mul!(memslots3,true,I*coeff1,true,true)
     # Computing B5 with operation: mult
-    mul!(memslots[7],memslots[2],memslots[3])
+    mul!(memslots7,memslots2,memslots3)
     # Deallocating Ba5 in slot 2
     # Deallocating Bb5 in slot 3
     # Computing Ba6 = x*I+x*A+x*B2+x*B3+x*B4+x*B5
@@ -106,8 +114,8 @@ end
     coeff4=-0.024971360914667298
     coeff5=0.20141416233600964
     coeff6=0.9838034227912541
-    memslots[2] .= coeff2.*memslots[1] .+ coeff3.*memslots[4] .+ coeff4.*memslots[5] .+ coeff5.*memslots[6] .+ coeff6.*memslots[7]
-    mul!(memslots[2],true,I*coeff1,true,true)
+    memslots2 .= coeff2.*memslots1 .+ coeff3.*memslots4 .+ coeff4.*memslots5 .+ coeff5.*memslots6 .+ coeff6.*memslots7
+    mul!(memslots2,true,I*coeff1,true,true)
     # Computing Bb6 = x*I+x*A+x*B2+x*B3+x*B4+x*B5
     coeff1=-7.332920860083383e-8
     coeff2=3.6275534419311994e-10
@@ -115,10 +123,10 @@ end
     coeff4=5.386947932212966e-11
     coeff5=3.696432230206371e-12
     coeff6=1.7604767541951467e-14
-    memslots[3] .= coeff2.*memslots[1] .+ coeff3.*memslots[4] .+ coeff4.*memslots[5] .+ coeff5.*memslots[6] .+ coeff6.*memslots[7]
-    mul!(memslots[3],true,I*coeff1,true,true)
+    memslots3 .= coeff2.*memslots1 .+ coeff3.*memslots4 .+ coeff4.*memslots5 .+ coeff5.*memslots6 .+ coeff6.*memslots7
+    mul!(memslots3,true,I*coeff1,true,true)
     # Computing B6 with operation: mult
-    mul!(memslots[8],memslots[2],memslots[3])
+    mul!(memslots8,memslots2,memslots3)
     # Deallocating Ba6 in slot 2
     # Deallocating Bb6 in slot 3
     # Computing Ba7 = x*I+x*A+x*B2+x*B3+x*B4+x*B5+x*B6
@@ -129,8 +137,8 @@ end
     coeff5=-0.35076815913299725
     coeff6=0.9784008568588043
     coeff7=4.756683002701541e-7
-    memslots[2] .= coeff2.*memslots[1] .+ coeff3.*memslots[4] .+ coeff4.*memslots[5] .+ coeff5.*memslots[6] .+ coeff6.*memslots[7] .+ coeff7.*memslots[8]
-    mul!(memslots[2],true,I*coeff1,true,true)
+    memslots2 .= coeff2.*memslots1 .+ coeff3.*memslots4 .+ coeff4.*memslots5 .+ coeff5.*memslots6 .+ coeff6.*memslots7 .+ coeff7.*memslots8
+    mul!(memslots2,true,I*coeff1,true,true)
     # Computing Bb7 = x*I+x*A+x*B2+x*B3+x*B4+x*B5+x*B6
     coeff1=-0.004732216406789163
     coeff2=1.2338220978385536e-5
@@ -139,10 +147,10 @@ end
     coeff5=1.4212591399083807e-6
     coeff6=1.2164967481538e-7
     coeff7=1.0000000002008125
-    memslots[3] .= coeff2.*memslots[1] .+ coeff3.*memslots[4] .+ coeff4.*memslots[5] .+ coeff5.*memslots[6] .+ coeff6.*memslots[7] .+ coeff7.*memslots[8]
-    mul!(memslots[3],true,I*coeff1,true,true)
+    memslots3 .= coeff2.*memslots1 .+ coeff3.*memslots4 .+ coeff4.*memslots5 .+ coeff5.*memslots6 .+ coeff6.*memslots7 .+ coeff7.*memslots8
+    mul!(memslots3,true,I*coeff1,true,true)
     # Computing B7 with operation: mult
-    mul!(memslots[9],memslots[2],memslots[3])
+    mul!(memslots9,memslots2,memslots3)
     # Deallocating Ba7 in slot 2
     # Deallocating Bb7 in slot 3
     # Computing Ba8 = x*I+x*A+x*B2+x*B3+x*B4+x*B5+x*B6+x*B7
@@ -154,8 +162,8 @@ end
     coeff6=0.836798518267107
     coeff7=6.715240076479665e-7
     coeff8=0.03410244422083362
-    memslots[2] .= coeff2.*memslots[1] .+ coeff3.*memslots[4] .+ coeff4.*memslots[5] .+ coeff5.*memslots[6] .+ coeff6.*memslots[7] .+ coeff7.*memslots[8] .+ coeff8.*memslots[9]
-    mul!(memslots[2],true,I*coeff1,true,true)
+    memslots2 .= coeff2.*memslots1 .+ coeff3.*memslots4 .+ coeff4.*memslots5 .+ coeff5.*memslots6 .+ coeff6.*memslots7 .+ coeff7.*memslots8 .+ coeff8.*memslots9
+    mul!(memslots2,true,I*coeff1,true,true)
     # Computing Bb8 = x*I+x*A+x*B2+x*B3+x*B4+x*B5+x*B6+x*B7
     coeff1=0.09171588796170577
     coeff2=0.00978234693719379
@@ -165,10 +173,10 @@ end
     coeff6=0.005577510585906947
     coeff7=-7.0435154500906185e-6
     coeff8=1.0199299719677057
-    memslots[3] .= coeff2.*memslots[1] .+ coeff3.*memslots[4] .+ coeff4.*memslots[5] .+ coeff5.*memslots[6] .+ coeff6.*memslots[7] .+ coeff7.*memslots[8] .+ coeff8.*memslots[9]
-    mul!(memslots[3],true,I*coeff1,true,true)
+    memslots3 .= coeff2.*memslots1 .+ coeff3.*memslots4 .+ coeff4.*memslots5 .+ coeff5.*memslots6 .+ coeff6.*memslots7 .+ coeff7.*memslots8 .+ coeff8.*memslots9
+    mul!(memslots3,true,I*coeff1,true,true)
     # Computing B8 with operation: mult
-    mul!(memslots[10],memslots[2],memslots[3])
+    mul!(memslots10,memslots2,memslots3)
     # Deallocating Ba8 in slot 2
     # Deallocating Bb8 in slot 3
     # Computing Ba9 = x*I+x*A+x*B2+x*B3+x*B4+x*B5+x*B6+x*B7+x*B8
@@ -181,8 +189,8 @@ end
     coeff7=-0.4636979253428603
     coeff8=-0.005883392744500455
     coeff9=1.0870379046019574
-    memslots[2] .= coeff2.*memslots[1] .+ coeff3.*memslots[4] .+ coeff4.*memslots[5] .+ coeff5.*memslots[6] .+ coeff6.*memslots[7] .+ coeff7.*memslots[8] .+ coeff8.*memslots[9] .+ coeff9.*memslots[10]
-    mul!(memslots[2],true,I*coeff1,true,true)
+    memslots2 .= coeff2.*memslots1 .+ coeff3.*memslots4 .+ coeff4.*memslots5 .+ coeff5.*memslots6 .+ coeff6.*memslots7 .+ coeff7.*memslots8 .+ coeff8.*memslots9 .+ coeff9.*memslots10
+    mul!(memslots2,true,I*coeff1,true,true)
     # Computing Bb9 = x*I+x*A+x*B2+x*B3+x*B4+x*B5+x*B6+x*B7+x*B8
     coeff1=0.8838850843889047
     coeff2=0.13220125487009166
@@ -194,10 +202,10 @@ end
     coeff8=0.007845590149896397
     coeff9=0.9425352289352358
     # Smart lincomb recycle B5
-    memslots[7] .= coeff2.*memslots[1] .+ coeff3.*memslots[4] .+ coeff4.*memslots[5] .+ coeff5.*memslots[6] .+ coeff6.*memslots[7] .+ coeff7.*memslots[8] .+ coeff8.*memslots[9] .+ coeff9.*memslots[10]
-    mul!(memslots[7],true,I*coeff1,true,true)
+    memslots7 .= coeff2.*memslots1 .+ coeff3.*memslots4 .+ coeff4.*memslots5 .+ coeff5.*memslots6 .+ coeff6.*memslots7 .+ coeff7.*memslots8 .+ coeff8.*memslots9 .+ coeff9.*memslots10
+    mul!(memslots7,true,I*coeff1,true,true)
     # Computing B9 with operation: mult
-    mul!(memslots[3],memslots[2],memslots[7])
+    mul!(memslots3,memslots2,memslots7)
     # Deallocating Ba9 in slot 2
     # Deallocating Bb9 in slot 7
     # Computing T2k11 = x*I+x*A+x*B2+x*B3+x*B4+x*B6+x*B7+x*B8+x*B9
@@ -211,8 +219,8 @@ end
     coeff8=-0.00026219521556040433
     coeff9=1.0181552414422717
     # Smart lincomb recycle A
-    memslots[1] .= coeff2.*memslots[1] .+ coeff3.*memslots[4] .+ coeff4.*memslots[5] .+ coeff5.*memslots[6] .+ coeff6.*memslots[8] .+ coeff7.*memslots[9] .+ coeff8.*memslots[10] .+ coeff9.*memslots[3]
-    mul!(memslots[1],true,I*coeff1,true,true)
+    memslots1 .= coeff2.*memslots1 .+ coeff3.*memslots4 .+ coeff4.*memslots5 .+ coeff5.*memslots6 .+ coeff6.*memslots8 .+ coeff7.*memslots9 .+ coeff8.*memslots10 .+ coeff9.*memslots3
+    mul!(memslots1,true,I*coeff1,true,true)
     # Deallocating B2 in slot 4
     # Deallocating B3 in slot 5
     # Deallocating B4 in slot 6
@@ -220,6 +228,6 @@ end
     # Deallocating B7 in slot 9
     # Deallocating B8 in slot 10
     # Deallocating B9 in slot 3
-    return memslots[1] # Returning T2k11
+    return memslots1 # Returning T2k11
 end
 

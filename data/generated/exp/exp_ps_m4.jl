@@ -15,36 +15,39 @@ function matfun_axpby!(X,a,b,Y::UniformScaling)
 end
 
 @inline function exp_ps_m4(A)
-    return exp_ps_m4!(copy(A))
+    T=promote_type(eltype(A),Float64)
+    A_copy=similar(A,T); A_copy .= A;
+    return exp_ps_m4!(A_copy)
 end
 
 @inline function exp_ps_m4!(A)
     T=promote_type(eltype(A),Float64) # Make it work for many 'bigger' types (matrices and scalars)
-    max_memslots=5
-    memslots=Vector{Matrix{T}}(undef,max_memslots)
+    # max_memslots=5
     n=size(A,1)
-    for j=1:max_memslots
-        memslots[j]=Matrix{T}(undef,n,n)
-    end
     # The first slots are precomputed nodes [:A]
-    memslots[1]=A # overwrite A
+    memslots2 = similar(A,T)
+    memslots3 = similar(A,T)
+    memslots4 = similar(A,T)
+    memslots5 = similar(A,T)
+    # Assign precomputed nodes memslots 
+    memslots1=A # overwrite A
     # Uniform scaling is exploited.
     # No matrix I explicitly allocated.
     value_one=ValueOne()
     # Computation order: A2 A3 P2 C1 P1 C0 P0
     # Computing A2 with operation: mult
-    mul!(memslots[2],memslots[1],memslots[1])
+    mul!(memslots2,memslots1,memslots1)
     # Computing A3 with operation: mult
-    mul!(memslots[3],memslots[1],memslots[2])
+    mul!(memslots3,memslots1,memslots2)
     # Computing P2 = x*I+x*A+x*A2+x*A3
     coeff1=0.001388888888888889
     coeff2=0.0001984126984126984
     coeff3=2.48015873015873e-5
     coeff4=2.7557319223985893e-6
-    memslots[4] .= coeff2.*memslots[1] .+ coeff3.*memslots[2] .+ coeff4.*memslots[3]
-    mul!(memslots[4],true,I*coeff1,true,true)
+    memslots4 .= coeff2.*memslots1 .+ coeff3.*memslots2 .+ coeff4.*memslots3
+    mul!(memslots4,true,I*coeff1,true,true)
     # Computing C1 with operation: mult
-    mul!(memslots[5],memslots[4],memslots[3])
+    mul!(memslots5,memslots4,memslots3)
     # Deallocating P2 in slot 4
     # Computing P1 = x*I+x*A+x*A2+x*C1
     coeff1=0.16666666666666666
@@ -52,10 +55,10 @@ end
     coeff3=0.008333333333333333
     coeff4=1.0
     # Smart lincomb recycle C1
-    memslots[5] .= coeff2.*memslots[1] .+ coeff3.*memslots[2] .+ coeff4.*memslots[5]
-    mul!(memslots[5],true,I*coeff1,true,true)
+    memslots5 .= coeff2.*memslots1 .+ coeff3.*memslots2 .+ coeff4.*memslots5
+    mul!(memslots5,true,I*coeff1,true,true)
     # Computing C0 with operation: mult
-    mul!(memslots[4],memslots[5],memslots[3])
+    mul!(memslots4,memslots5,memslots3)
     # Deallocating P1 in slot 5
     # Deallocating A3 in slot 3
     # Computing P0 = x*I+x*A+x*A2+x*C0
@@ -64,10 +67,10 @@ end
     coeff3=0.5
     coeff4=1.0
     # Smart lincomb recycle A
-    memslots[1] .= coeff2.*memslots[1] .+ coeff3.*memslots[2] .+ coeff4.*memslots[4]
-    mul!(memslots[1],true,I*coeff1,true,true)
+    memslots1 .= coeff2.*memslots1 .+ coeff3.*memslots2 .+ coeff4.*memslots4
+    mul!(memslots1,true,I*coeff1,true,true)
     # Deallocating A2 in slot 2
     # Deallocating C0 in slot 4
-    return memslots[1] # Returning P0
+    return memslots1 # Returning P0
 end
 

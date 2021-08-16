@@ -15,41 +15,49 @@ function matfun_axpby!(X,a,b,Y::UniformScaling)
 end
 
 @inline function exp_mono_m9(A)
-    return exp_mono_m9!(copy(A))
+    T=promote_type(eltype(A),Float64)
+    A_copy=similar(A,T); A_copy .= A;
+    return exp_mono_m9!(A_copy)
 end
 
 @inline function exp_mono_m9!(A)
     T=promote_type(eltype(A),Float64) # Make it work for many 'bigger' types (matrices and scalars)
-    max_memslots=10
-    memslots=Vector{Matrix{T}}(undef,max_memslots)
+    # max_memslots=10
     n=size(A,1)
-    for j=1:max_memslots
-        memslots[j]=Matrix{T}(undef,n,n)
-    end
     # The first slots are precomputed nodes [:A]
-    memslots[1]=A # overwrite A
+    memslots2 = similar(A,T)
+    memslots3 = similar(A,T)
+    memslots4 = similar(A,T)
+    memslots5 = similar(A,T)
+    memslots6 = similar(A,T)
+    memslots7 = similar(A,T)
+    memslots8 = similar(A,T)
+    memslots9 = similar(A,T)
+    memslots10 = similar(A,T)
+    # Assign precomputed nodes memslots 
+    memslots1=A # overwrite A
     # Uniform scaling is exploited.
     # No matrix I explicitly allocated.
     value_one=ValueOne()
     # Computation order: B2 B3 B4 B5 B6 B7 B8 B9 B10 T2k12
     # Computing B2 with operation: mult
-    mul!(memslots[2],memslots[1],memslots[1])
+    mul!(memslots2,memslots1,memslots1)
     # Computing B3 with operation: mult
-    mul!(memslots[3],memslots[2],memslots[1])
+    mul!(memslots3,memslots2,memslots1)
     # Computing B4 with operation: mult
-    mul!(memslots[4],memslots[3],memslots[1])
+    mul!(memslots4,memslots3,memslots1)
     # Computing B5 with operation: mult
-    mul!(memslots[5],memslots[4],memslots[1])
+    mul!(memslots5,memslots4,memslots1)
     # Computing B6 with operation: mult
-    mul!(memslots[6],memslots[5],memslots[1])
+    mul!(memslots6,memslots5,memslots1)
     # Computing B7 with operation: mult
-    mul!(memslots[7],memslots[6],memslots[1])
+    mul!(memslots7,memslots6,memslots1)
     # Computing B8 with operation: mult
-    mul!(memslots[8],memslots[7],memslots[1])
+    mul!(memslots8,memslots7,memslots1)
     # Computing B9 with operation: mult
-    mul!(memslots[9],memslots[8],memslots[1])
+    mul!(memslots9,memslots8,memslots1)
     # Computing B10 with operation: mult
-    mul!(memslots[10],memslots[9],memslots[1])
+    mul!(memslots10,memslots9,memslots1)
     # Computing T2k12 = x*I+x*A+x*B2+x*B3+x*B4+x*B5+x*B6+x*B7+x*B8+x*B9+x*B10
     coeff1=1.0
     coeff2=1.0
@@ -63,8 +71,8 @@ end
     coeff10=2.7557319223985893e-6
     coeff11=2.755731922398589e-7
     # Smart lincomb recycle A
-    memslots[1] .= coeff2.*memslots[1] .+ coeff3.*memslots[2] .+ coeff4.*memslots[3] .+ coeff5.*memslots[4] .+ coeff6.*memslots[5] .+ coeff7.*memslots[6] .+ coeff8.*memslots[7] .+ coeff9.*memslots[8] .+ coeff10.*memslots[9] .+ coeff11.*memslots[10]
-    mul!(memslots[1],true,I*coeff1,true,true)
+    memslots1 .= coeff2.*memslots1 .+ coeff3.*memslots2 .+ coeff4.*memslots3 .+ coeff5.*memslots4 .+ coeff6.*memslots5 .+ coeff7.*memslots6 .+ coeff8.*memslots7 .+ coeff9.*memslots8 .+ coeff10.*memslots9 .+ coeff11.*memslots10
+    mul!(memslots1,true,I*coeff1,true,true)
     # Deallocating B2 in slot 2
     # Deallocating B3 in slot 3
     # Deallocating B4 in slot 4
@@ -74,6 +82,6 @@ end
     # Deallocating B8 in slot 8
     # Deallocating B9 in slot 9
     # Deallocating B10 in slot 10
-    return memslots[1] # Returning T2k12
+    return memslots1 # Returning T2k12
 end
 
